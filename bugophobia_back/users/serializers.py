@@ -3,7 +3,6 @@ from .models import Patient
 
 
 class RegisterPatientSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Patient
         fields = ['email', 'username', 'password']
@@ -16,3 +15,9 @@ class RegisterPatientSerializer(serializers.ModelSerializer):
             instance.set_password(password)
         instance.save()
         return instance
+
+
+class PatientDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Patient
+        fields = ['email', 'username']
