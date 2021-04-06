@@ -9,17 +9,23 @@ from .serializers import *
 
 # Create your views here.
 
-class RegisterPatientView(generics.CreateAPIView):
-    queryset = Patient.objects.all()
-    serializer_class = RegisterPatientSerializer
-
-
+# class RegisterPatientView(generics.CreateAPIView):
+#     queryset = Patient.objects.all()
+#     serializer_class = RegisterPatientSerializer
+#
+#
 class PatientDetailView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTTokenUserAuthentication]
     serializer_class = PatientDetailSerializer
 
     def get(self, request):
-        user = get_object_or_404(Patient, id=request.user.id)
-        serializer = PatientDetailSerializer(user)
+        user = get_object_or_404(BaseUser, id=request.user.id)
+        patient = get_object_or_404(Patient, user=user)
+        serializer = PatientDetailSerializer(patient)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class RegisterPatientView(generics.CreateAPIView):
+    queryset = Patient.objects.all()
+    serializer_class = RegisterPatientSerializer
