@@ -34,30 +34,26 @@ class Patient(models.Model):
         return self.user.email
 
 
-
-
-
-
 class Doctor(models.Model):
-    
-    FILED_OF_SPECIALIZATION =[
-        ('C' 'Cardiologist'),
-        ('D' , 'Dermatologist'),
-        ('G' , 'General practitioner'),
-        ('GY','Gynecologist'),
-        ('I' , 'Internist'),
-        ('N' , 'Neurologist'),
-        ('O' ,'Obstetrician '),
-        ('OP' , 'Ophthalmologist '),
-        ('OT' , 'Otolaryngologist'),
-        ('P' , 'Pediatrician '),
-        ('PS' , 'Psychiatrist '),
-        ('U' , 'Urologist')
+    FILED_OF_SPECIALIZATION = [
+        ('C', 'Cardiologist'),
+        ('D', 'Dermatologist'),
+        ('G', 'General practitioner'),
+        ('GY', 'Gynecologist'),
+        ('I', 'Internist'),
+        ('N', 'Neurologist'),
+        ('O', 'Obstetrician '),
+        ('OP', 'Ophthalmologist '),
+        ('OT', 'Otolaryngologist'),
+        ('P', 'Pediatrician '),
+        ('PS', 'Psychiatrist '),
+        ('U', 'Urologist')
     ]
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    filed_of_specialization = models.CharField(max_length=255 , choices= filed_of_specialization , default= 'G' , null=False , blank=False)
-    gmc_number = models.IntegerField(max_length=100 , null=False ) 
+    filed_of_specialization = models.CharField(max_length=255, choices=FILED_OF_SPECIALIZATION, default='G', null=False,
+                                               blank=False)
+    gmc_number = models.IntegerField(max_length=100, null=False)
 
     def __str__(self):
         return self.user.email
