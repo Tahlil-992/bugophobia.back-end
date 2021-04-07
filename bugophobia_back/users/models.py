@@ -33,11 +33,31 @@ class Patient(models.Model):
     def __str__(self):
         return self.user.email
 
-# class Doctor(AbstractUser):
-#     email = models.EmailField(max_length=255, unique=True)
-#     username = models.CharField(max_length=255, unique=True)
-#     USERNAME_FIELD = 'email'
-#     REQUIRED_FIELDS = ['username']
-#
-#     def __str__(self):
-#         return self.email
+
+
+
+
+
+class Doctor(models.Model):
+    
+    FILED_OF_SPECIALIZATION =[
+        ('C' 'Cardiologist'),
+        ('D' , 'Dermatologist'),
+        ('G' , 'General practitioner'),
+        ('GY','Gynecologist'),
+        ('I' , 'Internist'),
+        ('N' , 'Neurologist'),
+        ('O' ,'Obstetrician '),
+        ('OP' , 'Ophthalmologist '),
+        ('OT' , 'Otolaryngologist'),
+        ('P' , 'Pediatrician '),
+        ('PS' , 'Psychiatrist '),
+        ('U' , 'Urologist')
+    ]
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    filed_of_specialization = models.CharField(max_length=255 , choices= filed_of_specialization , default= 'G' , null=False , blank=False)
+    gmc_number = models.IntegerField(max_length=100 , null=False ) 
+
+    def __str__(self):
+        return self.user.email
