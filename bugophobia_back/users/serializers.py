@@ -1,11 +1,12 @@
 from rest_framework import serializers
-from .models import Patient, BaseUser , Doctor
+from .models import Patient, BaseUser, Doctor
 
 
 class RegisterBaseUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseUser
-        fields = ['email', 'username', 'first_name', 'last_name', 'gender', 'is_doctor', 'password']
+        fields = ['email', 'username', 'first_name', 'last_name', 'gender', 'age', 'phone_number', 'city', 'is_doctor',
+                  'password']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -17,7 +18,7 @@ class RegisterBaseUserSerializer(serializers.ModelSerializer):
         return instance
 
 
-#patient
+# patient
 
 class PatientDetailSerializer(serializers.ModelSerializer):
     user = RegisterBaseUserSerializer()
@@ -45,14 +46,14 @@ class RegisterPatientSerializer(serializers.ModelSerializer):
         return patient
 
 
-#doctor 
+# doctor
 
 class DoctorDetailSerializer(serializers.ModelSerializer):
     user = RegisterBaseUserSerializer()
 
     class Meta:
         model = Doctor
-        fields = ['user', 'gmc_number' , 'filed_of_specialization']
+        fields = ['user', 'gmc_number', 'filed_of_specialization']
 
 
 class RegisterDoctorSerializer(serializers.ModelSerializer):
@@ -60,7 +61,7 @@ class RegisterDoctorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Doctor
-        fields = ('user', 'gmc_number' , 'filed_of_specialization')
+        fields = ('user', 'gmc_number', 'filed_of_specialization')
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')

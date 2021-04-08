@@ -15,6 +15,9 @@ class BaseUser(AbstractUser):
     last_name = models.CharField(max_length=255, null=True, blank=True)
     gender = models.CharField(max_length=255, choices=GENDERS, null=True, blank=True)
     is_doctor = models.BooleanField(default=False)
+    age = models.IntegerField(null=True, blank=True)
+    phone_number = models.CharField(max_length=20, null=True, blank=True)
+    city = models.CharField(max_length=50, null=True, blank=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
@@ -53,7 +56,7 @@ class Doctor(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     filed_of_specialization = models.CharField(max_length=255, choices=FILED_OF_SPECIALIZATION, default='G', null=False,
                                                blank=False)
-    gmc_number = models.IntegerField(max_length=100, null=False)
+    gmc_number = models.IntegerField(null=False)
 
     def __str__(self):
         return self.user.email
