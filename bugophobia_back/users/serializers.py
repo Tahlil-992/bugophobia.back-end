@@ -53,7 +53,7 @@ class DoctorDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Doctor
-        fields = ['user', 'gmc_number', 'filed_of_specialization']
+        fields = ['user', 'gmc_number', 'filed_of_specialization' , 'work_experience']
 
 
 class RegisterDoctorSerializer(serializers.ModelSerializer):
@@ -61,7 +61,7 @@ class RegisterDoctorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Doctor
-        fields = ('user', 'gmc_number', 'filed_of_specialization')
+        fields = ('user', 'gmc_number', 'filed_of_specialization' , 'work_experience')
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')

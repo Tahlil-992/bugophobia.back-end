@@ -45,18 +45,19 @@ class Doctor(models.Model):
         ('GY', 'Gynecologist'),
         ('I', 'Internist'),
         ('N', 'Neurologist'),
-        ('O', 'Obstetrician '),
-        ('OP', 'Ophthalmologist '),
+        ('O', 'Obstetrician'),
+        ('OP', 'Ophthalmologist'),
         ('OT', 'Otolaryngologist'),
         ('P', 'Pediatrician '),
         ('PS', 'Psychiatrist '),
-        ('U', 'Urologist')
+        ('U', 'Urologist'),
     ]
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     filed_of_specialization = models.CharField(max_length=255, choices=FILED_OF_SPECIALIZATION, default='G', null=False,
                                                blank=False)
     gmc_number = models.IntegerField(null=False)
+    work_experience = models.IntegerField(default=0 , null=False)
 
     def __str__(self):
         return self.user.email
