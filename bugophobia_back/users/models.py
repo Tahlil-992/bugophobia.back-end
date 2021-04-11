@@ -9,6 +9,8 @@ from django.conf import settings
 class BaseUser(AbstractUser):
     GENDERS = [('M', 'Male'),
                ('F', 'Female')]
+
+    pro_picture = models.ImageField(null = True , blank = True)
     email = models.EmailField(max_length=255, unique=True)
     username = models.CharField(max_length=255, unique=True)
     first_name = models.CharField(max_length=255, null=True, blank=True)
