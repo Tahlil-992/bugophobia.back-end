@@ -71,3 +71,19 @@ class DoctorDetailView(generics.RetrieveAPIView):
 class RegisterDoctorView(generics.CreateAPIView):
     queryset = Doctor.objects.all()
     serializer_class = RegisterDoctorSerializer
+
+
+# class CreateCommentView(APIView):
+#     def post(self, request):
+#         doc_username = request.data.get('du')
+#         pat_username = request.data.get('pu')
+#         doc_bu = get_object_or_404(BaseUser, username=doc_username)
+#         pat_bu = get_object_or_404(BaseUser, username=pat_username)
+#         doc_u = get_object_or_404(Doctor, user=doc_bu)
+#         pat_u = get_object_or_404(Patient, user=pat_bu)
+#         cm = Comment.objects.create(doctor=doc_u, patient=pat_u, comment_text=request.data.get('cm'))
+#         return Response({1: 1}, status=status.HTTP_200_OK)
+
+class CreateCommentView(generics.CreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
