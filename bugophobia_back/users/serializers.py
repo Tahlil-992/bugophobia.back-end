@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import Patient, BaseUser, Doctor
 
 
@@ -53,7 +54,7 @@ class DoctorDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Doctor
-        fields = ['user', 'gmc_number', 'filed_of_specialization' , 'work_experience']
+        fields = ['user', 'gmc_number', 'filed_of_specialization', 'work_experience']
 
 
 class RegisterDoctorSerializer(serializers.ModelSerializer):
@@ -61,7 +62,7 @@ class RegisterDoctorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Doctor
-        fields = ('user', 'gmc_number', 'filed_of_specialization' , 'work_experience')
+        fields = ('user', 'gmc_number', 'filed_of_specialization', 'work_experience')
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
@@ -72,3 +73,10 @@ class RegisterDoctorSerializer(serializers.ModelSerializer):
         user.save()
         doctor = Doctor.objects.create(user=user, **validated_data)
         return doctor
+
+
+class CustomTokenSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        data['is_doctor'] = self.user.is_doctor
+        return data
