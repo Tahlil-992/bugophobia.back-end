@@ -63,15 +63,3 @@ class Doctor(models.Model):
 
     def __str__(self):
         return self.user.email
-
-
-class Comment(models.Model):
-    # doctor = models.OneToOneField(Doctor, on_delete=models.CASCADE, related_name='doctor')
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    # patient = models.OneToOneField(Patient, on_delete=models.CASCADE, related_name='patient')
-    comment_text = models.TextField()
-    created = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ['created']
