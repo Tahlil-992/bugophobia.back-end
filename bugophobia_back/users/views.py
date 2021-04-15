@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTTokenUserAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import Patient, Doctor
 from .serializers import *
@@ -33,6 +34,10 @@ class UsernameTokenView(APIView):
                 return Response(data={"detail": 'Not found.'}, status=status.HTTP_401_UNAUTHORIZED)
         else:
             return Response(data={"password": 'This field is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CustomTokenView(TokenObtainPairView):
+    serializer_class = CustomTokenSerializer
 
 
 # patient

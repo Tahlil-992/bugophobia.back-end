@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import *
 
 
@@ -73,3 +74,10 @@ class RegisterDoctorSerializer(serializers.ModelSerializer):
         user.save()
         doctor = Doctor.objects.create(user=user, **validated_data)
         return doctor
+
+
+class CustomTokenSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        data['is_doctor'] = self.user.is_doctor
+        return data
