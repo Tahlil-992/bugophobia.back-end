@@ -1,6 +1,7 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .models import Patient, BaseUser, Doctor
+from .models import *
 
 
 class RegisterBaseUserSerializer(serializers.ModelSerializer):
