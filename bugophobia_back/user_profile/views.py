@@ -54,3 +54,15 @@ class PublicPatientProfileView(generics.RetrieveAPIView):
         patient_user = get_object_or_404(BaseUser, username=self.request.data.get('username'))
         patient = get_object_or_404(Patient, user=patient_user)
         return patient
+
+
+class ListCommentView(generics.ListAPIView):
+    """List all comments of a specific doctor with getting doctor username"""
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTTokenUserAuthentication]
+    serializer_class = ListCommentSerializer
+
+    def get_queryset(self):
+        doctor_user = get_object_or_404(BaseUser, username=self.request.data.get('doctor_username'))
+        doctor = get_object_or_404(Doctor, user=doctor_user)
+        return Comment.objects.filter(doctor=doctor)
