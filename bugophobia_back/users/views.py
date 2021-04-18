@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTTokenUserAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import Patient, Doctor
+from .models import Patient, Doctor , Rate
 from .serializers import *
 
 
@@ -71,3 +71,18 @@ class DoctorDetailView(generics.RetrieveAPIView):
 class RegisterDoctorView(generics.CreateAPIView):
     queryset = Doctor.objects.all()
     serializer_class = RegisterDoctorSerializer
+
+
+#rate 
+
+class RateList(generics.CreateAPIView):
+    queryset = Rate.objects.all()
+    serializer_class = RateSerializer
+
+
+
+class RateDetail(APIView):
+    def get(self , request , pk , format = None):
+        data = Rate.objects.filter(pk=pk).aggregate(Avg("score"))
+        serializer = RateAverageSerializer(data)
+        return Response(serializer.data)

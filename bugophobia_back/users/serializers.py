@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Patient, BaseUser, Doctor
+from .models import Patient, BaseUser, Doctor ,Rate
 
 
 class RegisterBaseUserSerializer(serializers.ModelSerializer):
@@ -72,3 +72,25 @@ class RegisterDoctorSerializer(serializers.ModelSerializer):
         user.save()
         doctor = Doctor.objects.create(user=user, **validated_data)
         return doctor
+
+
+
+#rate
+
+class RateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rate
+        fields = ['id' , 'score']
+
+
+
+class RateAverageSerializer(serializers.Serializer):
+    rate__avg = serializers.FloatField()
+    
+    def create(self , validated_data):
+        return super().create(validated_data)
+
+    def update(self , instance , validated_data):
+        instance.rate__avg = validated_data.get('rate__avg' , instance.rate__avg)
+        instance.save()
+        return instance
