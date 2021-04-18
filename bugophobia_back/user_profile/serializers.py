@@ -48,3 +48,9 @@ class ListCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ('id', 'comment_text', 'created', 'patient', 'doctor_username')
+
+
+class DeleteUpdateCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ['comment_text']

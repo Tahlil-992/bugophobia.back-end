@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -66,3 +67,12 @@ class ListCommentView(generics.ListAPIView):
         doctor_user = get_object_or_404(BaseUser, username=self.request.data.get('doctor_username'))
         doctor = get_object_or_404(Doctor, user=doctor_user)
         return Comment.objects.filter(doctor=doctor)
+
+
+class DeleteUpdateCommentView(generics.RetrieveUpdateDestroyAPIView):
+    """"Delete comment with delete method and update comment with put & patch method and get specific comment with
+    get """
+    permission_classes = [IsAuthenticated, IsOwner]
+    serializer_class = DeleteUpdateCommentSerializer
+    queryset = Comment.objects.all()
+    lookup_field = 'id'
