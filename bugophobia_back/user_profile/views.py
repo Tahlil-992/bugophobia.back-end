@@ -1,6 +1,5 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import generics, status
-from rest_framework.pagination import PageNumberPagination
+from rest_framework import generics, status, mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -9,6 +8,7 @@ from rest_framework_simplejwt.authentication import JWTTokenUserAuthentication
 from .models import *
 from .serializers import *
 from .permissions import *
+from .paginations import *
 
 
 # Create your views here.
@@ -57,16 +57,22 @@ class PublicPatientProfileView(generics.RetrieveAPIView):
         return patient
 
 
-class ListCommentView(generics.ListAPIView):
+class ListCommentView(generics.GenericAPIView):
     """List all comments of a specific doctor with getting doctor username"""
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTTokenUserAuthentication]
     serializer_class = ListCommentSerializer
+    pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
         doctor_user = get_object_or_404(BaseUser, username=self.request.data.get('doctor_username'))
         doctor = get_object_or_404(Doctor, user=doctor_user)
         return Comment.objects.filter(doctor=doctor)
+
+    def post(self, request, *args, **kwargs):
+        queryset = self.paginate_queryset(self.get_queryset())
+        serializer = ListCommentSerializer(queryset, many=True)
+        return self.get_paginated_response(serializer.data)
 
 
 class DeleteUpdateCommentView(generics.RetrieveUpdateDestroyAPIView):
