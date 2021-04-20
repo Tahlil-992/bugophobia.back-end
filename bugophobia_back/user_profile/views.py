@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import generics, status
+from rest_framework import generics, status, mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -8,6 +8,7 @@ from rest_framework_simplejwt.authentication import JWTTokenUserAuthentication
 from .models import *
 from .serializers import *
 from .permissions import *
+from .paginations import *
 
 
 # Create your views here.
@@ -54,3 +55,30 @@ class PublicPatientProfileView(generics.RetrieveAPIView):
         patient_user = get_object_or_404(BaseUser, username=self.request.data.get('username'))
         patient = get_object_or_404(Patient, user=patient_user)
         return patient
+
+
+class ListCommentView(generics.GenericAPIView):
+    """List all comments of a specific doctor with getting doctor username"""
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTTokenUserAuthentication]
+    serializer_class = ListCommentSerializer
+    pagination_class = StandardResultsSetPagination
+
+    def get_queryset(self):
+        doctor_user = get_object_or_404(BaseUser, username=self.request.data.get('doctor_username'))
+        doctor = get_object_or_404(Doctor, user=doctor_user)
+        return Comment.objects.filter(doctor=doctor)
+
+    def post(self, request, *args, **kwargs):
+        queryset = self.paginate_queryset(self.get_queryset())
+        serializer = ListCommentSerializer(queryset, many=True)
+        return self.get_paginated_response(serializer.data)
+
+
+class DeleteUpdateCommentView(generics.RetrieveUpdateDestroyAPIView):
+    """"Delete comment with delete method and update comment with put & patch method and get specific comment with
+    get """
+    permission_classes = [IsAuthenticated, IsOwner]
+    serializer_class = DeleteUpdateCommentSerializer
+    queryset = Comment.objects.all()
+    lookup_field = 'id'

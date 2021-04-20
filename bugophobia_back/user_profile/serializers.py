@@ -39,3 +39,19 @@ class PublicPatientProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
         fields = ('user', 'username', 'insurance_type')
+
+
+class ListCommentSerializer(serializers.ModelSerializer):
+    patient = PublicPatientProfileSerializer(read_only=True)
+    doctor_username = serializers.CharField(write_only=True)
+    comment_text = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'comment_text', 'created', 'patient', 'doctor_username')
+
+
+class DeleteUpdateCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ['comment_text']
