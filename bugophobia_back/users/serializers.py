@@ -80,7 +80,7 @@ class RegisterDoctorSerializer(serializers.ModelSerializer):
 class RateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rate
-        fields = ['id' , 'score']
+        fields = ['id' , 'amount']
 
 
 
