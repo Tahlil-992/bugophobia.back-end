@@ -11,3 +11,13 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ['created']
+
+
+class SaveProfile(models.Model):
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['doctor', 'patient']
+        ordering = ['created']
