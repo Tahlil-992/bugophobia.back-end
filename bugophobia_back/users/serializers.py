@@ -5,7 +5,7 @@ from .models import Patient, BaseUser, Doctor ,Rate
 class RegisterBaseUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseUser
-        fields = ['email', 'username', 'first_name', 'last_name', 'gender', 'age', 'phone_number', 'city', 'is_doctor',
+        fields = ['pro_picture','email', 'username', 'first_name', 'last_name', 'gender', 'age', 'phone_number', 'city', 'is_doctor',
                   'password']
         extra_kwargs = {'password': {'write_only': True}}
 
