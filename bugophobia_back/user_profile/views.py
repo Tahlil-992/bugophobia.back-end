@@ -82,3 +82,9 @@ class DeleteUpdateCommentView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = DeleteUpdateCommentSerializer
     queryset = Comment.objects.all()
     lookup_field = 'id'
+
+
+class ListDoctorsView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Doctor.objects.all()
+    serializer_class = ListDoctorsSerializer

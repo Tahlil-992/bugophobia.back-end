@@ -55,3 +55,11 @@ class DeleteUpdateCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['comment_text']
+
+
+class ListDoctorsSerializer(serializers.ModelSerializer):
+    user = BaseUserSerializer()
+
+    class Meta:
+        model = Doctor
+        fields = ['user', 'filed_of_specialization', 'gmc_number', 'work_experience']

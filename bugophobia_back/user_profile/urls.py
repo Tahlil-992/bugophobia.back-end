@@ -7,4 +7,5 @@ urlpatterns = [
     path('comment/update_delete/<id>/', views.DeleteUpdateCommentView.as_view()),
     path('patient/', views.PatientProfileView.as_view()),
     path('patient/public/', views.PublicPatientProfileView.as_view()),
+    path('list_doctors/', views.ListDoctorsView.as_view()),
 ]
