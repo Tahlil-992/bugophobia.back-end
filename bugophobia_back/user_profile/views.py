@@ -132,3 +132,9 @@ class IsProfileSavedView(APIView):
             return Response(data={'saved': True}, status=status.HTTP_200_OK)
         else:
             return Response(data={'saved': False}, status=status.HTTP_200_OK)
+
+          
+class ListDoctorsView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Doctor.objects.all()
+    serializer_class = ListDoctorsSerializer

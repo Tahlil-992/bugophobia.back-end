@@ -70,3 +70,11 @@ class ListSavedProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = SaveProfile
         fields = ['id', 'doctor']
+        
+        
+class ListDoctorsSerializer(serializers.ModelSerializer):
+    user = BaseUserSerializer()
+
+    class Meta:
+        model = Doctor
+        fields = ['user', 'filed_of_specialization', 'gmc_number', 'work_experience']

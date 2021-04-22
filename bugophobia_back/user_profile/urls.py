@@ -10,4 +10,5 @@ urlpatterns = [
     path('save/', views.SaveProfileView.as_view()),
     path('remove_save/<id>/', views.RemoveSavedProfileView.as_view()),
     path('is_saved/', views.IsProfileSavedView.as_view()),
+    path('list_doctors/', views.ListDoctorsView.as_view()),
 ]
