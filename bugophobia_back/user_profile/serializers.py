@@ -55,3 +55,24 @@ class DeleteUpdateCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['comment_text']
+
+
+
+class DoctorProfileSerializer(serializers.ModelSerializer):
+    user = BaseUserSerializer()
+
+    class Meta:
+        model = Doctor
+        fields = ('user', 'gmc_number', 'filed_of_specialization', 'work_experience')
+
+
+class PublicDoctorProfileSerializer(serializers.ModelSerializer):
+    user = PublicBaseUserSerializer(read_only=True)
+    username = serializers.CharField(write_only=True)
+    filed_of_specialization = serializers.CharField(read_only=True)
+    work_experience = serializers.IntegerField(read_only=True)
+    gmc_number = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Doctor
+        fields = ('user', 'gmc_number', 'filed_of_specialization', 'work_experience')

@@ -82,3 +82,32 @@ class DeleteUpdateCommentView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = DeleteUpdateCommentSerializer
     queryset = Comment.objects.all()
     lookup_field = 'id'
+
+
+
+class DoctorProfileView(generics.RetrieveAPIView):
+    """Return Doctor profile to himself"""
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTTokenUserAuthentication]
+    queryset = Doctor.objects.all()
+    serializer_class = DoctorProfileSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        doctor_user = get_object_or_404(BaseUser, id=request.user.id)
+        doctor = get_object_or_404(Doctor, user=doctor_user)
+        serializer = self.serializer_class(doctor)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class PublicDoctorProfileView(generics.RetrieveAPIView):
+    """Returns doctor profile to patient"""
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTTokenUserAuthentication]
+    queryset = Doctor.objects.all()
+    serializer_class = PublicDoctorProfileSerializer
+
+    def get_object(self):
+        doctor_user = get_object_or_404(BaseUser, username=self.request.data.get('username'))
+        doctor = get_object_or_404(Doctor, user=doctor_user)
+        return doctor
+
