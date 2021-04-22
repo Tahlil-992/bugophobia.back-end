@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from .models import *
+from users.serializers import DoctorDetailSerializer
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -57,6 +58,20 @@ class DeleteUpdateCommentSerializer(serializers.ModelSerializer):
         fields = ['comment_text']
 
 
+class SaveProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SaveProfile
+        fields = ['id', 'doctor', 'created']
+
+
+class ListSavedProfileSerializer(serializers.ModelSerializer):
+    doctor = DoctorDetailSerializer()
+
+    class Meta:
+        model = SaveProfile
+        fields = ['id', 'doctor']
+        
+        
 class ListDoctorsSerializer(serializers.ModelSerializer):
     user = BaseUserSerializer()
 
