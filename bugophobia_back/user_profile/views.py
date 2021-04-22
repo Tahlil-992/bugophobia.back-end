@@ -45,7 +45,7 @@ class PatientProfileView(generics.RetrieveAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class PublicPatientProfileView(generics.RetrieveAPIView):
+class PublicPatientProfileView(generics.GenericAPIView):
     """Returns patient profile to doctors"""
     permission_classes = [IsAuthenticated, IsDoctor]
     authentication_classes = [JWTTokenUserAuthentication]
@@ -56,6 +56,11 @@ class PublicPatientProfileView(generics.RetrieveAPIView):
         patient_user = get_object_or_404(BaseUser, username=self.request.data.get('username'))
         patient = get_object_or_404(Patient, user=patient_user)
         return patient
+
+    def post(self, request, *args, **kwargs):
+        obj = self.get_object()
+        serializer = self.serializer_class(obj)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ListCommentView(generics.GenericAPIView):
@@ -133,7 +138,7 @@ class IsProfileSavedView(APIView):
         else:
             return Response(data={'saved': False}, status=status.HTTP_200_OK)
 
-          
+
 class ListDoctorsView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Doctor.objects.all()
