@@ -12,5 +12,5 @@ urlpatterns = [
     path('detail/patient/', views.PatientDetailView.as_view()),
     path('detail/doctor/' , views.DoctorDetailView.as_view()),
     path('rate-list/' , RateList.as_view(), name= 'rate-list'),
-    path('rate-detail/<int:pk>/', RateDetail.as_view(), name = 'rate-detail'),
+    path('rate-detail/<int:doctor_id>/', RateDetail.as_view(), name = 'rate-detail'),
 ]
