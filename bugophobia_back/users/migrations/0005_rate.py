@@ -6,9 +6,9 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('users', '0004_baseuser_pro_picture'),
-    ]
+    #dependencies = [
+    #    ('users', '0004_baseuser_pro_picture'),
+    #]
 
     operations = [
         migrations.CreateModel(
