@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_yasg',
     'users.apps.UsersConfig',
-    'star_ratings',
+    'user_profile.apps.UserProfileConfig',
 ]
 
 MIDDLEWARE = [

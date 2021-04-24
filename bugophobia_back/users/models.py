@@ -9,8 +9,10 @@ from django.conf import settings
 
 
 class BaseUser(AbstractUser):
-    GENDERS = [('M', 'Male'),('F', 'Female')]
-    pro_picture = models.ImageField(null = True , blank = True)
+    GENDERS = [('M', 'Male'),
+               ('F', 'Female')]
+
+    pro_picture = models.ImageField(null=True, blank=True)
     email = models.EmailField(max_length=255, unique=True)
     username = models.CharField(max_length=255, unique=True)
     first_name = models.CharField(max_length=255, null=True, blank=True)
@@ -26,8 +28,11 @@ class BaseUser(AbstractUser):
         return self.email
 
 class Patient(models.Model):
-    INSURANCE_TYPES = [('O', 'omr'),('H', 'havades'),('T', 'takmili')]
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    INSURANCE_TYPES = [('O', 'omr'),
+                       ('H', 'havades'),
+                       ('T', 'takmili')]
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True)
     insurance_type = models.CharField(max_length=255, choices=INSURANCE_TYPES, default='O', null=True, blank=True)
     def __str__(self):
         return self.user.email
@@ -47,10 +52,13 @@ class Doctor(models.Model):
         ('PS', 'Psychiatrist '),
         ('U', 'Urologist'),
     ]
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    filed_of_specialization = models.CharField(max_length=255, choices=FILED_OF_SPECIALIZATION, default='G', null=False,blank=False)
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True)
+    filed_of_specialization = models.CharField(max_length=255, choices=FILED_OF_SPECIALIZATION, default='G', null=False,
+                                               blank=False)
     gmc_number = models.IntegerField(null=False)
-    work_experience = models.IntegerField(default=0 , null=False)
+    work_experience = models.IntegerField(default=0, null=False)
+
     def __str__(self):
         return self.user.email
 

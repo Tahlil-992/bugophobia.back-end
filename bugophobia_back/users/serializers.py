@@ -1,15 +1,9 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-
-
-from .models import Patient, BaseUser, Doctor ,Rate
-
-
 from rest_framework.response import Response
-
-
 from rest_framework import status
-
-
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from .models import *
 
 
 class RegisterBaseUserSerializer(serializers.ModelSerializer):
@@ -133,9 +127,7 @@ class DoctorDetailSerializer(serializers.ModelSerializer):
 
 
         model = Doctor
-
-
-        fields = ['user', 'gmc_number', 'filed_of_specialization' , 'work_experience']
+        fields = ['user', 'gmc_number', 'filed_of_specialization', 'work_experience']
 
 
 
@@ -148,81 +140,36 @@ class RegisterDoctorSerializer(serializers.ModelSerializer):
 
 
     class Meta:
-
-
         model = Doctor
-
-
         fields = ('user', 'gmc_number', 'filed_of_specialization' , 'work_experience')
-
-
-
     def create(self, validated_data):
-
-
         user_data = validated_data.pop('user')
-
-
         password = user_data['password']
-
-
         user = BaseUser(**user_data)
-
-
         if password is not None:
-
-
             user.set_password(password)
-
-
         user.save()
-
-
         doctor = Doctor.objects.create(user=user, **validated_data)
         return doctor
 
-
-
-
-
 #Score
-
-
-
 class ScoreSerializer(serializers.ModelSerializer):    
-
-
     class Meta:
-
-
         model = Rate
-
-
         fields = "__all__"
 
 
-
-
-
 class ScoreAverageSerializer(serializers.Serializer):
-
-
     avg = serializers.FloatField()
-
-
     number = serializers.IntegerField()
-
-
     def create(self , validated_data):
-
-
         return super().create(validated_data)
-
-
-
     def update(self , instance , validated_data):
-
-
         return super().update(instance,validated_data)
 
 
+class CustomTokenSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        data['is_doctor'] = self.user.is_doctor
+        return data
