@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from .models import *
+from users.serializers import DoctorDetailSerializer
 
 
 class CommentSerializer(serializers.ModelSerializer):

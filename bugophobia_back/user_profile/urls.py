@@ -9,4 +9,8 @@ urlpatterns = [
     path('patient/public/', views.PublicPatientProfileView.as_view()),
     path('doctor/', views.DoctorProfileView.as_view()),
     path('doctor/public/', views.PublicDoctorProfileView.as_view()),
+    path('save/', views.SaveProfileView.as_view()),
+    path('remove_save/<id>/', views.RemoveSavedProfileView.as_view()),
+    path('is_saved/', views.IsProfileSavedView.as_view()),
+    path('list_doctors/', views.ListDoctorsView.as_view()),
 ]
