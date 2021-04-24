@@ -24,7 +24,7 @@ class PublicBaseUserSerializer(serializers.ModelSerializer):
         fields = ('email', 'username', 'first_name', 'last_name', 'gender', 'age', 'city')
 
 
-#patient profile
+# patient profile
 
 class PatientProfileSerializer(serializers.ModelSerializer):
     user = BaseUserSerializer()
@@ -59,7 +59,30 @@ class DeleteUpdateCommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ['comment_text']
 
-#doctor profile
+
+class SaveProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SaveProfile
+        fields = ['id', 'doctor', 'created']
+
+
+class ListSavedProfileSerializer(serializers.ModelSerializer):
+    doctor = DoctorDetailSerializer()
+
+    class Meta:
+        model = SaveProfile
+        fields = ['id', 'doctor']
+
+
+class ListDoctorsSerializer(serializers.ModelSerializer):
+    user = BaseUserSerializer()
+
+    class Meta:
+        model = Doctor
+        fields = ['user', 'filed_of_specialization', 'gmc_number', 'work_experience']
+
+
+# doctor profile
 
 class DoctorProfileSerializer(serializers.ModelSerializer):
     user = BaseUserSerializer()
@@ -78,4 +101,4 @@ class PublicDoctorProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Doctor
-        fields = ('user','username' , 'gmc_number', 'filed_of_specialization', 'work_experience')
+        fields = ('user', 'username', 'gmc_number', 'filed_of_specialization', 'work_experience')
