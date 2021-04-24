@@ -84,7 +84,6 @@ class DeleteUpdateCommentView(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'id'
 
 
-
 class DoctorProfileView(generics.RetrieveAPIView):
     """Return Doctor profile to himself"""
     permission_classes = [IsAuthenticated]
@@ -99,7 +98,7 @@ class DoctorProfileView(generics.RetrieveAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class PublicDoctorProfileView(generics.RetrieveAPIView):
+class PublicDoctorProfileView(generics.GenericAPIView):
     """Returns doctor profile to patient"""
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTTokenUserAuthentication]
@@ -111,3 +110,7 @@ class PublicDoctorProfileView(generics.RetrieveAPIView):
         doctor = get_object_or_404(Doctor, user=doctor_user)
         return doctor
 
+    def post(self, request, *args, **kwargs):
+        obj = self.get_object()
+        serializer = self.serializer_class(obj)
+        return Response(serializer.data, status=status.HTTP_200_OK)

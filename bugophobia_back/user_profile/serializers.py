@@ -57,7 +57,6 @@ class DeleteUpdateCommentSerializer(serializers.ModelSerializer):
         fields = ['comment_text']
 
 
-
 class DoctorProfileSerializer(serializers.ModelSerializer):
     user = BaseUserSerializer()
 
