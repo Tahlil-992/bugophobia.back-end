@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from django.db.utils import IntegrityError
 from rest_framework import generics, status, mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -44,7 +45,7 @@ class PatientProfileView(generics.RetrieveAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class PublicPatientProfileView(generics.RetrieveAPIView):
+class PublicPatientProfileView(generics.GenericAPIView):
     """Returns patient profile to doctors"""
     permission_classes = [IsAuthenticated, IsDoctor]
     authentication_classes = [JWTTokenUserAuthentication]
@@ -55,6 +56,11 @@ class PublicPatientProfileView(generics.RetrieveAPIView):
         patient_user = get_object_or_404(BaseUser, username=self.request.data.get('username'))
         patient = get_object_or_404(Patient, user=patient_user)
         return patient
+
+    def post(self, request, *args, **kwargs):
+        obj = self.get_object()
+        serializer = self.serializer_class(obj)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ListCommentView(generics.GenericAPIView):
@@ -114,3 +120,58 @@ class PublicDoctorProfileView(generics.GenericAPIView):
         obj = self.get_object()
         serializer = self.serializer_class(obj)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+      
+class SaveProfileView(generics.ListCreateAPIView):
+    """Save doctor's profile with get method and Returns User's saved profiles with get method"""
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTTokenUserAuthentication]
+    queryset = SaveProfile.objects.all()
+    serializer_class = SaveProfileSerializer
+
+    def create(self, request, *args, **kwargs):
+        patient = get_object_or_404(Patient, user_id=request.user.id)
+        doctor_base_user = get_object_or_404(BaseUser, username=request.data.get('doctor'))
+        doctor = get_object_or_404(Doctor, user=doctor_base_user)
+        try:
+            s = SaveProfile.objects.create(patient=patient, doctor=doctor)
+            serializer = self.serializer_class(s)
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        except IntegrityError:
+            return Response(data={'error': 'user has already saved the profile'}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+    def list(self, request, *args, **kwargs):
+        patient = get_object_or_404(Patient, user_id=request.user.id)
+        queryset = SaveProfile.objects.filter(patient=patient)
+        serializer = ListSavedProfileSerializer(queryset, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+class RemoveSavedProfileView(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated, IsOwner]
+    authentication_classes = [JWTTokenUserAuthentication]
+    queryset = SaveProfile.objects.all()
+    serializer_class = SaveProfileSerializer
+    lookup_field = 'id'
+
+
+class IsProfileSavedView(APIView):
+    """Gets 'doctor_username' and checks if user has saved it or not"""
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTTokenUserAuthentication]
+
+    def post(self, request, *args, **kwargs):
+        patient = get_object_or_404(Patient, user_id=request.user.id)
+        doctor_base_user = get_object_or_404(BaseUser, username=request.data.get("doctor_username"))
+        doctor = get_object_or_404(Doctor, user=doctor_base_user)
+        q = SaveProfile.objects.filter(patient=patient, doctor=doctor)
+        if q.count() > 0:
+            return Response(data={'saved': True}, status=status.HTTP_200_OK)
+        else:
+            return Response(data={'saved': False}, status=status.HTTP_200_OK)
+
+
+class ListDoctorsView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Doctor.objects.all()
+    serializer_class = ListDoctorsSerializer
