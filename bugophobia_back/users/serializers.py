@@ -9,7 +9,8 @@ from .models import *
 class RegisterBaseUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseUser
-        fields = ['pro_picture','email', 'username', 'first_name', 'last_name', 'gender', 'age', 'phone_number', 'city', 'is_doctor',
+        fields = ['pro_picture', 'email', 'username', 'first_name', 'last_name', 'gender', 'age', 'phone_number',
+                  'city', 'is_doctor',
                   'password']
         extra_kwargs = {'password': {'write_only': True}}
 
@@ -26,6 +27,7 @@ class RegisterBaseUserSerializer(serializers.ModelSerializer):
 
 class PatientDetailSerializer(serializers.ModelSerializer):
     user = RegisterBaseUserSerializer()
+
     class Meta:
         model = Patient
         fields = ['user', 'insurance_type']
@@ -33,9 +35,11 @@ class PatientDetailSerializer(serializers.ModelSerializer):
 
 class RegisterPatientSerializer(serializers.ModelSerializer):
     user = RegisterBaseUserSerializer()
+
     class Meta:
         model = Patient
         fields = ('user', 'insurance_type')
+
     def create(self, validated_data):
         user_data = validated_data.pop('user')
         password = user_data['password']
@@ -47,26 +51,24 @@ class RegisterPatientSerializer(serializers.ModelSerializer):
         return patient
 
 
-
-
 # doctor
-
 
 
 class DoctorDetailSerializer(serializers.ModelSerializer):
     user = RegisterBaseUserSerializer()
+
     class Meta:
         model = Doctor
         fields = ['user', 'gmc_number', 'filed_of_specialization', 'work_experience']
 
 
-
-
 class RegisterDoctorSerializer(serializers.ModelSerializer):
     user = RegisterBaseUserSerializer()
+
     class Meta:
         model = Doctor
-        fields = ('user', 'gmc_number', 'filed_of_specialization' , 'work_experience')
+        fields = ('user', 'gmc_number', 'filed_of_specialization', 'work_experience')
+
     def create(self, validated_data):
         user_data = validated_data.pop('user')
         password = user_data['password']
@@ -77,8 +79,9 @@ class RegisterDoctorSerializer(serializers.ModelSerializer):
         doctor = Doctor.objects.create(user=user, **validated_data)
         return doctor
 
-#Score
-class ScoreSerializer(serializers.ModelSerializer):    
+
+# Score
+class ScoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rate
         fields = "__all__"
@@ -87,10 +90,12 @@ class ScoreSerializer(serializers.ModelSerializer):
 class ScoreAverageSerializer(serializers.Serializer):
     avg = serializers.FloatField()
     number = serializers.IntegerField()
-    def create(self , validated_data):
+
+    def create(self, validated_data):
         return super().create(validated_data)
-    def update(self , instance , validated_data):
-        return super().update(instance,validated_data)
+
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
 
 
 class CustomTokenSerializer(TokenObtainPairSerializer):

@@ -3,8 +3,6 @@ from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 
 
-
-
 # Create your models here.
 
 
@@ -24,8 +22,10 @@ class BaseUser(AbstractUser):
     city = models.CharField(max_length=50, null=True, blank=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
+
     def __str__(self):
         return self.email
+
 
 class Patient(models.Model):
     INSURANCE_TYPES = [('O', 'omr'),
@@ -34,8 +34,10 @@ class Patient(models.Model):
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True)
     insurance_type = models.CharField(max_length=255, choices=INSURANCE_TYPES, default='O', null=True, blank=True)
+
     def __str__(self):
         return self.user.email
+
 
 class Doctor(models.Model):
     FILED_OF_SPECIALIZATION = [
@@ -64,10 +66,7 @@ class Doctor(models.Model):
 
 
 class Rate(models.Model):
-    SCORES = [(1,'1'),(2,'2'),(3,'3'),(3,'3'),(4,'4'),(5,'5')]
-    amount = models.IntegerField(default=0 , choices=SCORES) 
-    user_id = models.ForeignKey(Patient ,on_delete= models.CASCADE)
-    doctor_id = models.ForeignKey(Doctor , on_delete = models.CASCADE)
-
-
-    
+    SCORES = [(1, '1'), (2, '2'), (3, '3'), (3, '3'), (4, '4'), (5, '5')]
+    amount = models.IntegerField(default=0, choices=SCORES)
+    user_id = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    doctor_id = models.ForeignKey(Doctor, on_delete=models.CASCADE)
