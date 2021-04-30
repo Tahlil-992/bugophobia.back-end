@@ -9,6 +9,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import Patient, Doctor
 from .serializers import *
+from django.db.models import Avg
 
 
 class UsernameTokenView(APIView):
@@ -76,3 +77,30 @@ class DoctorDetailView(generics.RetrieveAPIView):
 class RegisterDoctorView(generics.CreateAPIView):
     queryset = Doctor.objects.all()
     serializer_class = RegisterDoctorSerializer
+
+
+#rate
+
+class RateList(generics.ListCreateAPIView):
+    queryset = Rate.objects.all()
+    serializer_class = ScoreSerializer
+
+    def create(self, request):
+        user_id = request.POST.get('user_id')
+        doctor_id = request.POST.get('doctor_id')
+        rate = Rate.objects.filter(user_id=user_id, doctor_id=doctor_id)
+        serializer = ScoreSerializer(data=request.data)
+        if rate:
+            return Response(status=status.HTTP_409_CONFLICT)
+        elif serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+
+
+class RateDetail(APIView):
+    def get(self, request, doctor_id, format=None):
+        avg = Rate.objects.filter(doctor_id=doctor_id).aggregate(Avg('amount'))
+        number = Rate.objects.filter(doctor_id=doctor_id).count()
+        data = {'avg': avg.get("amount__avg"), 'number': number}
+        serializer = ScoreAverageSerializer(data)
+        return Response(serializer.data)
