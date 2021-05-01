@@ -79,22 +79,25 @@ class RegisterDoctorView(generics.CreateAPIView):
     serializer_class = RegisterDoctorSerializer
 
 
-#rate
+# rate
 
 class RateList(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTTokenUserAuthentication]
     queryset = Rate.objects.all()
     serializer_class = ScoreSerializer
 
     def create(self, request):
-        user_id = request.POST.get('user_id')
+        user_id = request.user.id
         doctor_id = request.POST.get('doctor_id')
         rate = Rate.objects.filter(user_id=user_id, doctor_id=doctor_id)
-        serializer = ScoreSerializer(data=request.data)
+        serializer = ScoreSerializer(
+            data={'user_id': user_id, 'doctor_id': doctor_id, 'amount': request.POST.get('amount')})
         if rate:
             return Response(status=status.HTTP_409_CONFLICT)
         elif serializer.is_valid():
             serializer.save()
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class RateDetail(APIView):
