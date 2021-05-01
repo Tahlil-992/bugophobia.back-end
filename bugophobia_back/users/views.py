@@ -89,10 +89,10 @@ class RateList(generics.ListCreateAPIView):
 
     def create(self, request):
         user_id = request.user.id
-        doctor_id = request.POST.get('doctor_id')
+        doctor_id = request.data.get('doctor_id')
         rate = Rate.objects.filter(user_id=user_id, doctor_id=doctor_id)
         serializer = ScoreSerializer(
-            data={'user_id': user_id, 'doctor_id': doctor_id, 'amount': request.POST.get('amount')})
+            data={'user_id': user_id, 'doctor_id': doctor_id, 'amount': request.data.get('amount')})
         if rate:
             return Response(status=status.HTTP_409_CONFLICT)
         elif serializer.is_valid():
