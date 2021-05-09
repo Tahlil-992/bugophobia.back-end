@@ -11,4 +11,4 @@ class IsDoctor(permissions.BasePermission):
 
 class IsOwner(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        return request.user.id == obj.patient.user_id
+        return request.user.id == obj.patient.user_id or request.user.id == obj.doctor.user_id

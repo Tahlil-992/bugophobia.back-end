@@ -102,3 +102,15 @@ class PublicDoctorProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
         fields = ('user', 'username', 'gmc_number', 'filed_of_specialization', 'work_experience')
+
+
+class UpdateDoctorProfSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Doctor
+        fields = [ 'city' , 'phone_number' , 'username' , 'email']
+
+
+class UpdatePatientProfSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Patient
+        fields = [ 'email', 'username', 'first_name', 'last_name', 'gender', 'age', 'phone_number', 'city','insurance_type']

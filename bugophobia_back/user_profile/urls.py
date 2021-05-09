@@ -13,4 +13,6 @@ urlpatterns = [
     path('remove_save/<id>/', views.RemoveSavedProfileView.as_view()),
     path('is_saved/', views.IsProfileSavedView.as_view()),
     path('list_doctors/', views.ListDoctorsView.as_view()),
+    path('doctor/update/<id>/', views.UpdateDoctorProfView.as_view()),
+    path('patient/update/<id>/', views.UpdatePatientProfView.as_view()),
 ]

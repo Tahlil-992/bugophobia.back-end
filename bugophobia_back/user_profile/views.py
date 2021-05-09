@@ -175,3 +175,17 @@ class ListDoctorsView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Doctor.objects.all()
     serializer_class = ListDoctorsSerializer
+
+
+#edit profile
+class UpdateDoctorProfView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated, IsOwner]
+    queryset = Doctor.objects.all()
+    serializer = UpdateDoctorProfSerializer
+    lookup_field = 'id'
+
+class UpdatePatientProfView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated, IsOwner]
+    queryset = Patient.objects.all()
+    serializer = UpdatePatientProfSerializer
+    lookup_field = 'id'
