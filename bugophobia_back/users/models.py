@@ -60,6 +60,7 @@ class Doctor(models.Model):
                                                blank=False)
     gmc_number = models.IntegerField(null=False)
     work_experience = models.IntegerField(default=0, null=False)
+    visit_duration_time = models.IntegerField(null=True)
 
     def __str__(self):
         return self.user.email

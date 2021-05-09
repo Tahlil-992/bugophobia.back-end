@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'users.apps.UsersConfig',
     'user_profile.apps.UserProfileConfig',
+    'schedule.apps.ScheduleConfig',
 ]
 
 MIDDLEWARE = [
