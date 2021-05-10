@@ -7,8 +7,8 @@ from .models import *
 class RegisterBaseUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseUser
-        fields = ['email', 'username', 'first_name', 'last_name', 'gender', 'age', 'phone_number', 'city', 'is_doctor',
-                  'password']
+        fields = ['email', 'id', 'username', 'first_name', 'last_name', 'gender', 'age', 'phone_number', 'city',
+                  'is_doctor', 'password']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -81,3 +81,20 @@ class CustomTokenSerializer(TokenObtainPairSerializer):
         data = super().validate(attrs)
         data['is_doctor'] = self.user.is_doctor
         return data
+
+
+#rate
+
+class ScoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rate
+        fields = "__all__"
+
+
+class ScoreAverageSerializer(serializers.Serializer):
+    avg = serializers.FloatField()
+    number = serializers.IntegerField()
+    def create(self , validated_data):
+        return super().create(validated_data)
+    def update(self , instance , validated_data):
+        return super().update(instance,validated_data)
