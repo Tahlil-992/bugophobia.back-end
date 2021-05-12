@@ -185,3 +185,18 @@ class ChangeVisitDurationTimeView(generics.UpdateAPIView):
     def get_object(self):
         doctor = get_object_or_404(Doctor, user_id=self.request.user.id)
         return doctor
+
+
+#edit profile
+class UpdateDoctorProfView(generics.RetrieveUpdateDestroyAPIView):
+    #permission_classes = [IsAuthenticated, IsOwner]
+    queryset = BaseUser.objects.filter(is_doctor=True)
+    serializer_class = UpdateDoctorProfSerializer
+    lookup_field = 'username'
+    
+
+class UpdatePatientProfView(generics.RetrieveUpdateDestroyAPIView):
+    #permission_classes = [IsAuthenticated, IsOwner]
+    queryset = BaseUser.objects.filter(is_doctor = False)
+    serializer_class = UpdatePatientProfSerializer
+    lookup_field = 'username'

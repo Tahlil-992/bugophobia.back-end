@@ -23,6 +23,7 @@ urlpatterns = [
     path('auth/', include('users.urls'), name='users'),
     path('profile/', include('user_profile.urls'), name='user_profile'),
     path('schedule/', include('schedule.urls'), name='schedule'),
+    path('search/', include('search.urls'), name='search'),
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),

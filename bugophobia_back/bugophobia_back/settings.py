@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'user_profile.apps.UserProfileConfig',
     'schedule.apps.ScheduleConfig',
+    'search.apps.SearchConfig',
 ]
 
 MIDDLEWARE = [

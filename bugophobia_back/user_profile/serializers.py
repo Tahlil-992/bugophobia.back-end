@@ -15,13 +15,14 @@ class CommentSerializer(serializers.ModelSerializer):
 class BaseUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseUser
-        fields = ('email', 'username', 'first_name', 'last_name', 'gender', 'age', 'phone_number', 'city', 'is_doctor')
+        fields = (
+            'email', 'id', 'username', 'first_name', 'last_name', 'gender', 'age', 'phone_number', 'city', 'is_doctor')
 
 
 class PublicBaseUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseUser
-        fields = ('email', 'username', 'first_name', 'last_name', 'gender', 'age', 'city')
+        fields = ('email', 'id', 'username', 'first_name', 'last_name', 'gender', 'age', 'city')
 
 
 # patient profile
@@ -108,3 +109,15 @@ class ChangeVisitDurationTimeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
         fields = ('visit_duration_time',)
+
+
+class UpdateDoctorProfSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BaseUser
+        fields = [ 'city' , 'phone_number' , 'username' , 'email']
+
+
+class UpdatePatientProfSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BaseUser
+        fields = ['email', 'username', 'first_name', 'last_name', 'gender', 'age', 'phone_number', 'city']

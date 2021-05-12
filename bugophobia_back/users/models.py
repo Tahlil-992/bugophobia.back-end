@@ -64,3 +64,10 @@ class Doctor(models.Model):
 
     def __str__(self):
         return self.user.email
+
+
+class Rate(models.Model):
+    SCORES = [(1,'1'),(2,'2'),(3,'3'),(3,'3'),(4,'4'),(5,'5')]
+    amount = models.IntegerField(default=0 , choices=SCORES) 
+    user_id = models.ForeignKey(Patient ,on_delete= models.CASCADE)
+    doctor_id = models.ForeignKey(Doctor , on_delete = models.CASCADE)
