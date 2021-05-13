@@ -22,7 +22,7 @@ class BaseUserSerializer(serializers.ModelSerializer):
 class PublicBaseUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseUser
-        fields = ('email', 'id', 'username', 'first_name', 'last_name', 'gender', 'age', 'city')
+        fields = ('email', 'id', 'username', 'first_name', 'last_name', 'phone_number', 'gender', 'age', 'city')
 
 
 # patient profile
@@ -108,7 +108,7 @@ class PublicDoctorProfileSerializer(serializers.ModelSerializer):
 class UpdateDoctorProfSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseUser
-        fields = [ 'city' , 'phone_number' , 'username' , 'email']
+        fields = ['city', 'phone_number', 'username', 'email']
 
 
 class UpdatePatientProfSerializer(serializers.ModelSerializer):
