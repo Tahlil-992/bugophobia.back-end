@@ -98,3 +98,11 @@ class ScoreAverageSerializer(serializers.Serializer):
         return super().create(validated_data)
     def update(self , instance , validated_data):
         return super().update(instance,validated_data)
+
+
+class TopDoctorSerializer(serializers.ModelSerializer):
+    avg=serializers.FloatField(default=0.0)
+    number=serializers.IntegerField(default=0)
+    class Meta:
+        model=Doctor
+        fields=['user','filed_of_specialization','gmc_number','work_experience','avg','number']
