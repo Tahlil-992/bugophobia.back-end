@@ -7,3 +7,9 @@ class CreateReservationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservation
         fields = ('start_time',)
+
+
+class GetReservationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reservation
+        fields = ('id',)
