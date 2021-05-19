@@ -50,3 +50,11 @@ class GetReservationView(generics.UpdateAPIView):
             reservation.save()
             return Response(data={'detail': 'ok'}, status=status.HTTP_200_OK)
         return Response(data={'detail': 'time already taken'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ListReservationsView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ListReservationsSerializer
+
+    def get_queryset(self):
+        return Reservation.objects.filter(doctor__user_id=self.kwargs.get('id'))
