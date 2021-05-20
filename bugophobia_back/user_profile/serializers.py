@@ -114,4 +114,4 @@ class UpdateDoctorProfSerializer(serializers.ModelSerializer):
 class UpdatePatientProfSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseUser
-        fields = ['email', 'username', 'first_name', 'last_name', 'gender', 'age', 'phone_number', 'city']
+        fields = ['email', 'username', 'first_name', 'last_name', 'gender', 'age', 'phone_number', 'city' , 'pro_picture']

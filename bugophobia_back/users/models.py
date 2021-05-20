@@ -10,7 +10,7 @@ class BaseUser(AbstractUser):
     GENDERS = [('M', 'Male'),
                ('F', 'Female')]
 
-    pro_picture = models.ImageField(null=True, blank=True)
+    pro_picture = models.ImageField(null=True, blank=True , upload_to = "images")
     email = models.EmailField(max_length=255, unique=True)
     username = models.CharField(max_length=255, unique=True)
     first_name = models.CharField(max_length=255, null=True, blank=True)
