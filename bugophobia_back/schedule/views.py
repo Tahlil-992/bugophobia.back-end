@@ -58,3 +58,10 @@ class ListReservationsView(generics.ListAPIView):
 
     def get_queryset(self):
         return Reservation.objects.filter(doctor__user_id=self.kwargs.get('id'))
+
+
+class ListTakenReservationsView(generics.ListAPIView):
+    serializer_class = ListTakenReservationsSerializer
+
+    def get_queryset(self):
+        return Reservation.objects.filter(doctor__user_id=self.kwargs.get('id'), patient__isnull=False)

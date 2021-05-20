@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import *
+from users.models import *
+from user_profile.serializers import BaseUserSerializer
 
 
 class CreateReservationSerializer(serializers.ModelSerializer):
@@ -19,3 +21,25 @@ class ListReservationsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservation
         fields = ('id', 'start_time', 'end_time')
+
+
+class BaseUserReservationSerializer(BaseUserSerializer):
+    class Meta:
+        model = BaseUser
+        fields = ('id', 'username', 'first_name', 'last_name')
+
+
+class PatientReservationSerializer(serializers.ModelSerializer):
+    user = BaseUserReservationSerializer()
+
+    class Meta:
+        model = Patient
+        fields = ('user',)
+
+
+class ListTakenReservationsSerializer(serializers.ModelSerializer):
+    patient = PatientReservationSerializer()
+
+    class Meta:
+        model = Reservation
+        fields = ('id', 'patient', 'start_time', 'end_time')
