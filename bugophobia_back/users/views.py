@@ -130,5 +130,5 @@ class TopDoctorView(generics.ListAPIView):
                 data["avg"]=sum(avg_list)/len(avg_list)
                 data["number"]=len(avg_list)
 
-        data=sorted(serializer.data,key=lambda x:x["avg"]*x["number"],reverse=True)
+        data=sorted(serializer.data,key=lambda x:0.8*x["avg"]+0.08*x["number"],reverse=True)
         return Response(data)
