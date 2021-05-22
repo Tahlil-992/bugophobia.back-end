@@ -4,6 +4,8 @@ from .models import *
 from users.serializers import DoctorDetailSerializer
 
 
+
+
 class CommentSerializer(serializers.ModelSerializer):
     doctor = serializers.CharField(max_length=255)
 
@@ -115,3 +117,15 @@ class UpdatePatientProfSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseUser
         fields = ['email', 'username', 'first_name', 'last_name', 'gender', 'age', 'phone_number', 'city' , 'pro_picture']
+
+
+#chage pass
+
+class ChangePasswordSerializer(serializers.Serializer):
+    model = BaseUser
+
+    """
+    Serializer for password change endpoint.
+    """
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)

@@ -15,4 +15,5 @@ urlpatterns = [
     path('list_doctors/', views.ListDoctorsView.as_view()),
     path('doctor/update/<str:username>/', views.UpdateDoctorProfView.as_view()),
     path('patient/update/<str:username>/', views.UpdatePatientProfView.as_view()),
+    path('change_password/',views.ChangePasswordView.as_view()),
 ]
