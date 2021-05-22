@@ -90,13 +90,15 @@ class RateList(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         user_id = request.data.get('user_id')
         doctor_id = request.data.get('doctor_id')
+        user=Patient.objects.get(pk=user_id)
+        doctor=Doctor.objects.get(pk=doctor_id)
         rate = Rate.objects.filter(user_id=user_id, doctor_id=doctor_id)
+        # data={'id':rate[0].id,'user_id': user_id, 'doctor_id': doctor_id,'amount': request.data.get('amount')}
 
         if rate:## this part is for updating ==>not completed 
-            serializer = ScoreSerializer(data={'id':rate[0].id,'user_id': user_id, 'doctor_id': doctor_id,'amount': request.data.get('amount')})
-            if serializer.is_valid():
-                serializer.save()
-            return Response(serializer.data,status=status.HTTP_200_OK)
+            rate=Rate(id=rate[0].id,user_id=user,doctor_id=doctor,amount=request.data.get('amount'))
+            rate.save()
+            return Response(status=status.HTTP_200_OK)
         else :
             serializer = ScoreSerializer(data={'user_id': user_id, 'doctor_id': doctor_id,'amount': request.data.get('amount')})
             if serializer.is_valid():
