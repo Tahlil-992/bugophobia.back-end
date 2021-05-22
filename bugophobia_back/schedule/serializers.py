@@ -37,9 +37,25 @@ class PatientReservationSerializer(serializers.ModelSerializer):
         fields = ('user',)
 
 
+class DoctorReservationSerializer(serializers.ModelSerializer):
+    user = BaseUserReservationSerializer()
+
+    class Meta:
+        model = Doctor
+        fields = ('user', 'filed_of_specialization')
+
+
 class ListTakenReservationsSerializer(serializers.ModelSerializer):
     patient = PatientReservationSerializer()
 
     class Meta:
         model = Reservation
         fields = ('id', 'patient', 'start_time', 'end_time')
+
+
+class ListPatientReservationSerializer(serializers.ModelSerializer):
+    doctor = DoctorReservationSerializer()
+
+    class Meta:
+        model = Reservation
+        fields = ('id', 'start_time', 'end_time', 'doctor')

@@ -57,11 +57,23 @@ class ListReservationsView(generics.ListAPIView):
     serializer_class = ListReservationsSerializer
 
     def get_queryset(self):
-        return Reservation.objects.filter(doctor__user_id=self.kwargs.get('id'))
+        return Reservation.objects.filter(doctor__user_id=self.kwargs.get('id'), start_time__gt=datetime.now(),
+                                          patient__isnull=True)
 
 
 class ListTakenReservationsView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
     serializer_class = ListTakenReservationsSerializer
 
     def get_queryset(self):
-        return Reservation.objects.filter(doctor__user_id=self.kwargs.get('id'), patient__isnull=False)
+        return Reservation.objects.filter(doctor__user_id=self.kwargs.get('id'), patient__isnull=False,
+                                          start_time__gt=datetime.now())
+
+
+class ListPatientReservationView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTTokenUserAuthentication]
+    serializer_class = ListPatientReservationSerializer
+
+    def get_queryset(self):
+        return Reservation.objects.filter(patient__user_id=self.request.user.id, start_time__gt=datetime.now())
