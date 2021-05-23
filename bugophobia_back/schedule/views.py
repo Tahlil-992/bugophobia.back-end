@@ -38,6 +38,7 @@ class CreateReservationView(generics.CreateAPIView):
 
 
 class GetReservationView(generics.UpdateAPIView):
+    """Taking reservations view"""
     permission_classes = [IsAuthenticated, ~IsDoctor]
     authentication_classes = [JWTTokenUserAuthentication]
     serializer_class = GetReservationSerializer
@@ -53,6 +54,7 @@ class GetReservationView(generics.UpdateAPIView):
 
 
 class ListReservationsView(generics.ListAPIView):
+    """List all available reservations to patients"""
     permission_classes = [IsAuthenticated]
     serializer_class = ListReservationsSerializer
 
@@ -61,19 +63,36 @@ class ListReservationsView(generics.ListAPIView):
                                           patient__isnull=True)
 
 
-class ListTakenReservationsView(generics.ListAPIView):
+class ListDoctorReservationsView(generics.ListAPIView):
+    """List doctor's reservations"""
     permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTTokenUserAuthentication]
     serializer_class = ListTakenReservationsSerializer
 
     def get_queryset(self):
-        return Reservation.objects.filter(doctor__user_id=self.kwargs.get('id'), patient__isnull=False,
-                                          start_time__gt=datetime.now())
+        from_date_str = self.kwargs.get('from_date')  # YYYYMMDD
+        from_date = datetime(year=int(from_date_str[:4]), month=int(from_date_str[4:6]), day=int(from_date_str[6:]),
+                             hour=0, minute=0)
+        to_date_str = self.kwargs.get('to_date')  # YYYYMMDD
+        to_date = datetime(year=int(to_date_str[:4]), month=int(to_date_str[4:6]), day=int(to_date_str[6:]), hour=0,
+                           minute=0)
+        return Reservation.objects.filter(doctor__user_id=self.request.user.id,
+                                          start_time__gt=from_date,
+                                          start_time__lt=to_date)
 
 
 class ListPatientReservationView(generics.ListAPIView):
+    """List patient reservations"""
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTTokenUserAuthentication]
     serializer_class = ListPatientReservationSerializer
 
     def get_queryset(self):
-        return Reservation.objects.filter(patient__user_id=self.request.user.id, start_time__gt=datetime.now())
+        from_date_str = self.kwargs.get('from_date')  # YYYYMMDD
+        from_date = datetime(year=int(from_date_str[:4]), month=int(from_date_str[4:6]), day=int(from_date_str[6:]),
+                             hour=0, minute=0)
+        to_date_str = self.kwargs.get('to_date')  # YYYYMMDD
+        to_date = datetime(year=int(to_date_str[:4]), month=int(to_date_str[4:6]), day=int(to_date_str[6:]), hour=0,
+                           minute=0)
+        return Reservation.objects.filter(patient__user_id=self.request.user.id, start_time__gt=from_date,
+                                          start_time__lt=to_date)
