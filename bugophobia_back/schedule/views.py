@@ -9,7 +9,7 @@ from datetime import timedelta, datetime
 from .serializers import *
 from .models import Reservation
 from users.models import Doctor
-from user_profile.permissions import IsDoctor
+from user_profile.permissions import IsDoctor, IsOwner
 
 
 # Create your views here.
@@ -96,3 +96,25 @@ class ListPatientReservationView(generics.ListAPIView):
                            minute=0)
         return Reservation.objects.filter(patient__user_id=self.request.user.id, start_time__gt=from_date,
                                           start_time__lt=to_date)
+
+
+class DeleteReservationView(generics.DestroyAPIView):
+    """Delete not taken reservations"""
+    permission_classes = [IsAuthenticated, IsDoctor]
+    authentication_classes = [JWTTokenUserAuthentication]
+    serializer_class = GetReservationSerializer
+
+    def get_object(self):
+        obj = get_object_or_404(Reservation, doctor__user_id=self.request.user.id, id=self.kwargs.get('id'))
+        if obj.patient:
+            return None
+        return obj
+
+    def destroy(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj:
+            self.perform_destroy(obj)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(data={'detail': "You can't delete a time that has a patient"},
+                            status=status.HTTP_400_BAD_REQUEST)
