@@ -1,8 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
-
-
 # Create your models here.
 
 
@@ -70,3 +68,22 @@ class Rate(models.Model):
     amount = models.IntegerField(default=0 , choices=SCORES) 
     user_id = models.ForeignKey(Patient ,on_delete= models.CASCADE)
     doctor_id = models.ForeignKey(Doctor , on_delete = models.CASCADE)
+
+    def __str__(self):
+        return self.amount
+
+
+
+class Office(models.Model):
+    doctor=models.ForeignKey(Doctor,on_delete=models.CASCADE)
+    title=models.CharField(max_length=100)
+    address=models.TextField()
+    location=models.FloatField()
+
+    def __str__(self):
+        return self.title
+
+
+class OfficePhone(models.Model):
+    office=models.ForeignKey(Office,related_name='phone',on_delete=models.CASCADE)
+    phone=models.TextField()

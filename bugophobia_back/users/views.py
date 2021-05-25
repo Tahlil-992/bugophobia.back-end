@@ -134,3 +134,37 @@ class TopDoctorView(generics.ListAPIView):
 
         data=sorted(serializer.data,key=lambda x:0.8*x["avg"]+0.08*x["number"],reverse=True)
         return Response(data)
+
+
+class OfficeList(generics.ListCreateAPIView):
+    serializer_class=OfficeSerialzier
+    queryset=Office.objects.all()
+
+# {
+#     "doctor": 1,
+#     "title": "new item",
+#     "address": "تهران",
+#     "location": 454454.0,
+#     "phone": [
+#         {
+#             "phone": "+914221036"
+#         },
+#         {
+#             "phone": "+9144562528"
+#         },
+#         {
+#             "phone": "+9144562528"
+#         }
+#     ]
+# }
+
+# class OfficeDetail(generics.RetrieveUpdateDestroyAPIView):
+#     serializer_class=OfficeSerialzier
+#     queryset=Office.objects.all()
+
+
+class officeListByDoctorID(generics.ListAPIView):
+    serializer_class=OfficeSerialzier
+
+    def get_queryset(self):
+        return Office.objects.filter(doctor=self.kwargs['doctor'])

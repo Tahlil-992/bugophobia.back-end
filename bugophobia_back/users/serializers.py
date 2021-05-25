@@ -106,3 +106,36 @@ class TopDoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model=Doctor
         fields=['user','filed_of_specialization','gmc_number','work_experience','avg','number']
+
+
+
+class OfficePhoneSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=OfficePhone
+        fields=['id','phone']
+
+    
+class OfficeSerialzier(serializers.ModelSerializer):
+    phone=OfficePhoneSerializer(many=True)
+
+    def create(self, validated_data):
+        print('************************************************************************************************')
+        phones=validated_data.pop('phone')
+        office=Office.objects.create(**validated_data)
+        ##
+        for data in phones:
+            p=OfficePhone(phone=data['phone'],office=office)
+            p.save()
+        ##
+        return office
+
+    # def update(self, instance, validated_data):
+    #     phones_data=validated_data.pop('phone')
+    #     phone=instance.phone
+    #     # for data in phones_data:
+    #     #     data.phone
+    #     return super().update(instance, validated_data)
+    class Meta():
+        model=Office
+        fields=['id','doctor','title','address','location','phone']
+        lookup_field='doctor'
