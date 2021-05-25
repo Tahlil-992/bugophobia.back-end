@@ -83,7 +83,7 @@ class CustomTokenSerializer(TokenObtainPairSerializer):
         return data
 
 
-#rate
+# rate
 
 class ScoreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -94,7 +94,22 @@ class ScoreSerializer(serializers.ModelSerializer):
 class ScoreAverageSerializer(serializers.Serializer):
     avg = serializers.FloatField()
     number = serializers.IntegerField()
-    def create(self , validated_data):
+
+    def create(self, validated_data):
         return super().create(validated_data)
-    def update(self , instance , validated_data):
-        return super().update(instance,validated_data)
+
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
+
+
+class ForgotPasswordUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BaseUser
+        fields = ['email']
+
+
+class ConfirmResetPasswordUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BaseUser
+        fields = ['password']
+        extra_kwargs = {'password': {'write_only': True}}

@@ -66,7 +66,13 @@ class Doctor(models.Model):
 
 
 class Rate(models.Model):
-    SCORES = [(1,'1'),(2,'2'),(3,'3'),(3,'3'),(4,'4'),(5,'5')]
-    amount = models.IntegerField(default=0 , choices=SCORES) 
-    user_id = models.ForeignKey(Patient ,on_delete= models.CASCADE)
-    doctor_id = models.ForeignKey(Doctor , on_delete = models.CASCADE)
+    SCORES = [(1, '1'), (2, '2'), (3, '3'), (3, '3'), (4, '4'), (5, '5')]
+    amount = models.IntegerField(default=0, choices=SCORES)
+    user_id = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    doctor_id = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+
+
+class ResetPasswordToken(models.Model):
+    token = models.CharField(max_length=6, unique=True)
+    user = models.ForeignKey(BaseUser, on_delete=models.CASCADE)
+    expiry_time = models.DateTimeField()

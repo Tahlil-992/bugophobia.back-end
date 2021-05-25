@@ -6,9 +6,15 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTTokenUserAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
+from datetime import datetime, timedelta
+from django.core.mail import send_mail
+from django.utils import timezone
+import string
+import random
 
 from .models import Patient, Doctor
 from .serializers import *
+from bugophobia_back.settings import EMAIL_HOST_USER
 from django.db.models import Avg
 
 
@@ -107,3 +113,48 @@ class RateDetail(APIView):
         data = {'avg': avg.get("amount__avg"), 'number': number}
         serializer = ScoreAverageSerializer(data)
         return Response(serializer.data)
+
+
+class ForgotPasswordView(generics.GenericAPIView):
+    serializer_class = ForgotPasswordUserSerializer
+    queryset = ResetPasswordToken.objects.all()
+
+    def post(self, request):
+        serializer = self.serializer_class(request.data)
+        ResetPasswordToken.objects.filter(user__email=serializer.data.get('email')).delete()
+        is_different = True
+        while is_different:
+            token = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
+            token_query = ResetPasswordToken.objects.filter(token=token)
+            if token_query:
+                is_different = True
+            else:
+                is_different = False
+        user = get_object_or_404(BaseUser, email=serializer.data.get('email'))
+        message = f'Your reset password code is \n{token}'
+        send_mail(
+            'Reset password code',
+            message,
+            EMAIL_HOST_USER,
+            [request.data.get('email')],
+            fail_silently=False,
+        )
+        ResetPasswordToken.objects.create(token=token, user=user, expiry_time=datetime.now() + timedelta(minutes=2))
+        return Response(status=status.HTTP_200_OK)
+
+
+class ConfirmResetPasswordView(generics.GenericAPIView):
+    serializer_class = ConfirmResetPasswordUserSerializer
+    queryset = BaseUser.objects.all()
+
+    def post(self, request, token):
+        reset_password_token = get_object_or_404(ResetPasswordToken, token=token)
+        if reset_password_token.expiry_time > datetime.now(reset_password_token.expiry_time.tzinfo):
+            user = reset_password_token.user
+            if request.data.get('password') is not None:
+                user.set_password(request.data.get('password'))
+            user.save()
+            return Response(status=status.HTTP_200_OK)
+        else:
+            reset_password_token.delete()
+            return Response(data={'detail': 'token expired'}, status=status.HTTP_400_BAD_REQUEST)
