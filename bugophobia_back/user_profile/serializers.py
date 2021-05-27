@@ -90,7 +90,7 @@ class DoctorProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Doctor
-        fields = ('user', 'gmc_number', 'filed_of_specialization', 'work_experience')
+        fields = ('user', 'gmc_number', 'filed_of_specialization', 'work_experience', 'visit_duration_time')
 
 
 class PublicDoctorProfileSerializer(serializers.ModelSerializer):
@@ -103,6 +103,12 @@ class PublicDoctorProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
         fields = ('user', 'username', 'gmc_number', 'filed_of_specialization', 'work_experience')
+
+
+class ChangeVisitDurationTimeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Doctor
+        fields = ('visit_duration_time',)
 
 
 class UpdateDoctorProfSerializer(serializers.ModelSerializer):

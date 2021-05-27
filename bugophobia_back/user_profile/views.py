@@ -121,7 +121,7 @@ class PublicDoctorProfileView(generics.GenericAPIView):
         serializer = self.serializer_class(obj)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-      
+
 class SaveProfileView(generics.ListCreateAPIView):
     """Save doctor's profile with get method and Returns User's saved profiles with get method"""
     permission_classes = [IsAuthenticated]
@@ -175,6 +175,16 @@ class ListDoctorsView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Doctor.objects.all()
     serializer_class = ListDoctorsSerializer
+
+
+class ChangeVisitDurationTimeView(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated, IsDoctor]
+    queryset = Doctor.objects.all()
+    serializer_class = ChangeVisitDurationTimeSerializer
+
+    def get_object(self):
+        doctor = get_object_or_404(Doctor, user_id=self.request.user.id)
+        return doctor
 
 
 #edit profile
