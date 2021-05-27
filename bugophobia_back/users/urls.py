@@ -14,5 +14,7 @@ urlpatterns = [
     path('rate-list/' , RateList.as_view(), name= 'rate-list'),
     path('rate-detail/<int:doctor_id>/', RateDetail.as_view(), name = 'rate-detail'),
     path('top-doctor-list/' , views.TopDoctorView.as_view(), name= 'top-doctor-list'),
-
+    path('office-list/' , views.OfficeList.as_view(), name= 'office-list'),
+    path('office-list/<int:doctor>/' , views.officeListByDoctorID.as_view(), name= 'office-list'),
+    # path('office-detail/<int:pk>/' , views.OfficeDetail.as_view(), name= 'office-detail'),
 ]
