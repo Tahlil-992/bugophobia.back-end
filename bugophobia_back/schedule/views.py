@@ -31,10 +31,11 @@ class CreateReservationView(generics.CreateAPIView):
                             status=status.HTTP_400_BAD_REQUEST)
         q = Reservation.objects.filter(start_time__lte=start_time, end_time__gt=start_time, doctor=doctor)
         if len(q) == 0:
-            Reservation.objects.create(doctor=doctor, start_time=start_time, end_time=end_time)
+            obj = Reservation.objects.create(doctor=doctor, start_time=start_time, end_time=end_time)
         else:
             return Response(data={'error': 'time conflict'}, status=status.HTTP_400_BAD_REQUEST)
-        return Response(data={'detail': 'created'}, status=status.HTTP_201_CREATED)
+        serializer = self.serializer_class(obj)
+        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
 
 class GetReservationView(generics.UpdateAPIView):

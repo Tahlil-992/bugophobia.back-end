@@ -8,7 +8,7 @@ from user_profile.serializers import BaseUserSerializer
 class CreateReservationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservation
-        fields = ('start_time',)
+        fields = ('start_time', 'id')
 
 
 class GetReservationSerializer(serializers.ModelSerializer):
