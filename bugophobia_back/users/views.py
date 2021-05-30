@@ -82,25 +82,26 @@ class RegisterDoctorView(generics.CreateAPIView):
 # rate
 
 class RateList(generics.ListCreateAPIView):
-    # permission_classes = [IsAuthenticated]
-    # authentication_classes = [JWTTokenUserAuthentication]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTTokenUserAuthentication]
     queryset = Rate.objects.all()
     serializer_class = ScoreSerializer
 
     def create(self, request, *args, **kwargs):
-        user_id = request.data.get('user_id')
+        user_id = request.user.id
         doctor_id = request.data.get('doctor_id')
-        user=Patient.objects.get(pk=user_id)
-        doctor=Doctor.objects.get(pk=doctor_id)
+        user = Patient.objects.get(pk=user_id)
+        doctor = Doctor.objects.get(pk=doctor_id)
         rate = Rate.objects.filter(user_id=user_id, doctor_id=doctor_id)
         # data={'id':rate[0].id,'user_id': user_id, 'doctor_id': doctor_id,'amount': request.data.get('amount')}
 
-        if rate:## this part is for updating ==>not completed 
-            rate=Rate(id=rate[0].id,user_id=user,doctor_id=doctor,amount=request.data.get('amount'))
+        if rate:  ## this part is for updating ==>not completed
+            rate = Rate(id=rate[0].id, user_id=user, doctor_id=doctor, amount=request.data.get('amount'))
             rate.save()
             return Response(status=status.HTTP_200_OK)
-        else :
-            serializer = ScoreSerializer(data={'user_id': user_id, 'doctor_id': doctor_id,'amount': request.data.get('amount')})
+        else:
+            serializer = ScoreSerializer(
+                data={'user_id': user_id, 'doctor_id': doctor_id, 'amount': request.data.get('amount')})
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -118,27 +119,28 @@ class RateDetail(APIView):
 
 
 class TopDoctorView(generics.ListAPIView):
-    queryset=Doctor.objects.all()
-    serializer_class=TopDoctorSerializer
+    queryset = Doctor.objects.all()
+    serializer_class = TopDoctorSerializer
 
     def list(self, request, *args, **kwargs):
-        doctor=self.get_queryset()
-        serializer=TopDoctorSerializer(doctor,many=True)
+        doctor = self.get_queryset()
+        serializer = TopDoctorSerializer(doctor, many=True)
 
         for data in serializer.data:
-            rates=Rate.objects.filter(doctor_id=data["user"])
-            avg_list=[i.amount for i in rates]
+            rates = Rate.objects.filter(doctor_id=data["user"])
+            avg_list = [i.amount for i in rates]
             if avg_list:
-                data["avg"]=sum(avg_list)/len(avg_list)
-                data["number"]=len(avg_list)
+                data["avg"] = sum(avg_list) / len(avg_list)
+                data["number"] = len(avg_list)
 
-        data=sorted(serializer.data,key=lambda x:0.8*x["avg"]+0.08*x["number"],reverse=True)
+        data = sorted(serializer.data, key=lambda x: 0.8 * x["avg"] + 0.08 * x["number"], reverse=True)
         return Response(data)
 
 
 class OfficeList(generics.ListCreateAPIView):
-    serializer_class=OfficeSerialzier
-    queryset=Office.objects.all()
+    serializer_class = OfficeSerialzier
+    queryset = Office.objects.all()
+
 
 # {
 #     "doctor": 1,
@@ -164,7 +166,7 @@ class OfficeList(generics.ListCreateAPIView):
 
 
 class officeListByDoctorID(generics.ListAPIView):
-    serializer_class=OfficeSerialzier
+    serializer_class = OfficeSerialzier
 
     def get_queryset(self):
         return Office.objects.filter(doctor=self.kwargs['doctor'])
