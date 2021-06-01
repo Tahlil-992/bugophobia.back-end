@@ -24,6 +24,7 @@ class CreateReservationView(generics.CreateAPIView):
         start_time_list = request.data.get('start_time').split()
         start_time = datetime(year=int(start_time_list[0]), month=int(start_time_list[1]), day=int(start_time_list[2]),
                               hour=int(start_time_list[3]), minute=int(start_time_list[4]))
+        office = get_object_or_404(Office, id=request.data.get('office'))
         if doctor.visit_duration_time:
             end_time = start_time + timedelta(minutes=doctor.visit_duration_time)
         else:
@@ -31,7 +32,7 @@ class CreateReservationView(generics.CreateAPIView):
                             status=status.HTTP_400_BAD_REQUEST)
         q = Reservation.objects.filter(start_time__lte=start_time, end_time__gt=start_time, doctor=doctor)
         if len(q) == 0:
-            obj = Reservation.objects.create(doctor=doctor, start_time=start_time, end_time=end_time)
+            obj = Reservation.objects.create(doctor=doctor, start_time=start_time, end_time=end_time, office=office)
         else:
             return Response(data={'error': 'time conflict'}, status=status.HTTP_400_BAD_REQUEST)
         serializer = self.serializer_class(obj)
@@ -60,7 +61,7 @@ class ListReservationsView(generics.ListAPIView):
     serializer_class = ListReservationsSerializer
 
     def get_queryset(self):
-        return Reservation.objects.filter(doctor__user_id=self.kwargs.get('id'), start_time__gt=datetime.now(),
+        return Reservation.objects.filter(office__id=self.kwargs.get('office_id'), start_time__gt=datetime.now(),
                                           patient__isnull=True)
 
 
