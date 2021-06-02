@@ -59,19 +59,17 @@ class Doctor(models.Model):
     gmc_number = models.IntegerField(null=False)
     work_experience = models.IntegerField(default=0, null=False)
     visit_duration_time = models.IntegerField(null=True)
+    rate_avg=models.FloatField(default=0.0)
 
     def __str__(self):
         return self.user.email
 
 
 class Rate(models.Model):
-    SCORES = [(1,'1'),(2,'2'),(3,'3'),(3,'3'),(4,'4'),(5,'5')]
-    amount = models.IntegerField(default=0 , choices=SCORES) 
+    SCORES = [(1,'1'),(2,'2'),(3,'3'),(4,'4'),(5,'5')]
+    amount = models.IntegerField(default=1 , choices=SCORES) 
     user_id = models.ForeignKey(Patient ,on_delete= models.CASCADE)
     doctor_id = models.ForeignKey(Doctor , on_delete = models.CASCADE)
-
-    def __str__(self):
-        return self.amount
 
 
 
@@ -82,7 +80,7 @@ class Office(models.Model):
     location=models.FloatField()
 
     def __str__(self):
-        return self.title
+        return f"{self.title}({self.id})"
 
 
 class OfficePhone(models.Model):

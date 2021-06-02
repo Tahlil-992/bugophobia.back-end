@@ -158,9 +158,9 @@ class OfficeList(generics.ListCreateAPIView):
 #     ]
 # }
 
-# class OfficeDetail(generics.RetrieveUpdateDestroyAPIView):
-#     serializer_class=OfficeSerialzier
-#     queryset=Office.objects.all()
+class OfficeDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class=OfficeSerialzier
+    queryset=Office.objects.all()
 
 
 class officeListByDoctorID(generics.ListAPIView):
