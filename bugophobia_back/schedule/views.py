@@ -83,6 +83,23 @@ class ListDoctorReservationsView(generics.ListAPIView):
                                           start_time__lt=to_date)
 
 
+class ListOfficeReservationsView(generics.ListAPIView):
+    """List doctor's reservations"""
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTTokenUserAuthentication]
+    serializer_class = ListTakenReservationsSerializer
+
+    def get_queryset(self):
+        from_date_str = self.kwargs.get('from_date')  # YYYYMMDD
+        from_date = datetime(year=int(from_date_str[:4]), month=int(from_date_str[4:6]), day=int(from_date_str[6:]),
+                             hour=0, minute=0)
+        to_date_str = self.kwargs.get('to_date')  # YYYYMMDD
+        to_date = datetime(year=int(to_date_str[:4]), month=int(to_date_str[4:6]), day=int(to_date_str[6:]), hour=0,
+                           minute=0)
+        return Reservation.objects.filter(office__id=self.kwargs.get('office_id'), start_time__gt=from_date,
+                                          start_time__lt=to_date)
+
+
 class ListPatientReservationView(generics.ListAPIView):
     """List patient reservations"""
     permission_classes = [IsAuthenticated]
