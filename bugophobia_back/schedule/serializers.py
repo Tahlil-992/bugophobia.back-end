@@ -3,6 +3,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import *
 from users.models import *
 from user_profile.serializers import BaseUserSerializer
+from users.serializers import OfficeSerialzier
 
 
 class CreateReservationSerializer(serializers.ModelSerializer):
@@ -55,7 +56,8 @@ class ListTakenReservationsSerializer(serializers.ModelSerializer):
 
 class ListPatientReservationSerializer(serializers.ModelSerializer):
     doctor = DoctorReservationSerializer()
+    office = OfficeSerialzier()
 
     class Meta:
         model = Reservation
-        fields = ('id', 'start_time', 'end_time', 'doctor')
+        fields = ('id', 'start_time', 'end_time', 'doctor', 'office')
