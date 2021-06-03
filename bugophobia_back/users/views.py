@@ -82,13 +82,13 @@ class RegisterDoctorView(generics.CreateAPIView):
 # rate
 
 class RateList(generics.ListCreateAPIView):
-    # permission_classes = [IsAuthenticated]
-    # authentication_classes = [JWTTokenUserAuthentication]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTTokenUserAuthentication]
     queryset = Rate.objects.all()
     serializer_class = ScoreSerializer
 
     def create(self, request, *args, **kwargs):
-        user_id = request.data.get('user_id')
+        user_id = request.user.id
         doctor_id = request.data.get('doctor_id')
         user=Patient.objects.get(pk=user_id)
         doctor=Doctor.objects.get(pk=doctor_id)

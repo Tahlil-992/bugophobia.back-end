@@ -82,7 +82,7 @@ class ListDoctorsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Doctor
-        fields = ['user', 'filed_of_specialization', 'gmc_number', 'work_experience']
+        fields = ['user', 'filed_of_specialization', 'gmc_number', 'work_experience', 'rate_avg']
 
 
 # doctor profile
