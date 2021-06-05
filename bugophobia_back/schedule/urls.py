@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     path('create_reservation/', views.CreateReservationView.as_view()),
+    path('create_multiple_reservations/', views.CreateMultipleReservationsView.as_view()),
     path('get_reservation/', views.GetReservationView.as_view()),
     path('list_reservations/<office_id>/', views.ListReservationsView.as_view()),
     path('doctor_reservations/<from_date>/<to_date>/', views.ListDoctorReservationsView.as_view()),

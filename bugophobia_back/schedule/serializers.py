@@ -9,7 +9,7 @@ from users.serializers import OfficeSerialzier
 class CreateReservationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservation
-        fields = ('start_time', 'id', 'office')
+        fields = ('start_time', 'end_time', 'id', 'office')
 
 
 class GetReservationSerializer(serializers.ModelSerializer):
