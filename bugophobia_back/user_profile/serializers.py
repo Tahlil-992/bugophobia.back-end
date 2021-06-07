@@ -4,8 +4,6 @@ from .models import *
 from users.serializers import DoctorDetailSerializer
 
 
-
-
 class CommentSerializer(serializers.ModelSerializer):
     doctor = serializers.CharField(max_length=255)
 
@@ -104,7 +102,7 @@ class PublicDoctorProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Doctor
-        fields = ('user', 'username', 'gmc_number', 'filed_of_specialization', 'work_experience')
+        fields = ('user', 'username', 'gmc_number', 'filed_of_specialization', 'work_experience', 'visit_duration_time')
 
 
 class ChangeVisitDurationTimeSerializer(serializers.ModelSerializer):
@@ -116,16 +114,17 @@ class ChangeVisitDurationTimeSerializer(serializers.ModelSerializer):
 class UpdateDoctorProfSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseUser
-        fields = [ 'city' , 'phone_number' , 'username' , 'email' , 'pro_picture']
+        fields = ['city', 'phone_number', 'username', 'email', 'pro_picture']
 
 
 class UpdatePatientProfSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseUser
-        fields = ['email', 'username', 'first_name', 'last_name', 'gender', 'age', 'phone_number', 'city' , 'pro_picture']
+        fields = ['email', 'username', 'first_name', 'last_name', 'gender', 'age', 'phone_number', 'city',
+                  'pro_picture']
 
 
-#chage pass
+# chage pass
 
 class ChangePasswordSerializer(serializers.Serializer):
     model = BaseUser
