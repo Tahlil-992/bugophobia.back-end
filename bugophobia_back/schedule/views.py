@@ -24,6 +24,7 @@ class CreateReservationView(generics.CreateAPIView):
         start_time_list = request.data.get('start_time').split()
         start_time = datetime(year=int(start_time_list[0]), month=int(start_time_list[1]), day=int(start_time_list[2]),
                               hour=int(start_time_list[3]), minute=int(start_time_list[4]))
+        office = get_object_or_404(Office, id=request.data.get('office'))
         if doctor.visit_duration_time:
             end_time = start_time + timedelta(minutes=doctor.visit_duration_time)
         else:
@@ -31,7 +32,7 @@ class CreateReservationView(generics.CreateAPIView):
                             status=status.HTTP_400_BAD_REQUEST)
         q = Reservation.objects.filter(start_time__lte=start_time, end_time__gt=start_time, doctor=doctor)
         if len(q) == 0:
-            obj = Reservation.objects.create(doctor=doctor, start_time=start_time, end_time=end_time)
+            obj = Reservation.objects.create(doctor=doctor, start_time=start_time, end_time=end_time, office=office)
         else:
             return Response(data={'error': 'time conflict'}, status=status.HTTP_400_BAD_REQUEST)
         serializer = self.serializer_class(obj)
@@ -60,7 +61,7 @@ class ListReservationsView(generics.ListAPIView):
     serializer_class = ListReservationsSerializer
 
     def get_queryset(self):
-        return Reservation.objects.filter(doctor__user_id=self.kwargs.get('id'), start_time__gt=datetime.now(),
+        return Reservation.objects.filter(office__id=self.kwargs.get('office_id'), start_time__gt=datetime.now(),
                                           patient__isnull=True)
 
 
@@ -79,6 +80,23 @@ class ListDoctorReservationsView(generics.ListAPIView):
                            minute=0)
         return Reservation.objects.filter(doctor__user_id=self.request.user.id,
                                           start_time__gt=from_date,
+                                          start_time__lt=to_date)
+
+
+class ListOfficeReservationsView(generics.ListAPIView):
+    """List doctor's reservations"""
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTTokenUserAuthentication]
+    serializer_class = ListTakenReservationsSerializer
+
+    def get_queryset(self):
+        from_date_str = self.kwargs.get('from_date')  # YYYYMMDD
+        from_date = datetime(year=int(from_date_str[:4]), month=int(from_date_str[4:6]), day=int(from_date_str[6:]),
+                             hour=0, minute=0)
+        to_date_str = self.kwargs.get('to_date')  # YYYYMMDD
+        to_date = datetime(year=int(to_date_str[:4]), month=int(to_date_str[4:6]), day=int(to_date_str[6:]), hour=0,
+                           minute=0)
+        return Reservation.objects.filter(office__id=self.kwargs.get('office_id'), start_time__gt=from_date,
                                           start_time__lt=to_date)
 
 
@@ -119,3 +137,32 @@ class DeleteReservationView(generics.DestroyAPIView):
         else:
             return Response(data={'detail': "You can't delete a time that has a patient"},
                             status=status.HTTP_400_BAD_REQUEST)
+
+
+class CreateMultipleReservationsView(generics.CreateAPIView):
+    permission_classes = [IsAuthenticated, IsDoctor]
+    authentication_classes = [JWTTokenUserAuthentication]
+    serializer_class = CreateReservationSerializer
+
+    def create(self, request, *args, **kwargs):
+        doctor = get_object_or_404(Doctor, user_id=request.user.id)
+        start_time_list = request.data.get('start_time').split()
+        start_time = datetime(year=int(start_time_list[0]), month=int(start_time_list[1]), day=int(start_time_list[2]),
+                              hour=int(start_time_list[3]), minute=int(start_time_list[4]))
+        end_time_list = request.data.get('end_time').split()
+        end_time = datetime(year=int(end_time_list[0]), month=int(end_time_list[1]), day=int(end_time_list[2]),
+                            hour=int(end_time_list[3]), minute=int(end_time_list[4]))
+        office = get_object_or_404(Office, id=request.data.get('office'))
+        if not doctor.visit_duration_time:
+            return Response(data={'error': "doctor didn't add visit duration time"}, status=status.HTTP_400_BAD_REQUEST)
+        objs = []
+        while start_time < end_time:
+            q = Reservation.objects.filter(start_time__lte=start_time, end_time__gt=start_time, doctor=doctor)
+            end_time_temp = start_time + timedelta(minutes=doctor.visit_duration_time)
+            if len(q) == 0:
+                objs.append(Reservation.objects.create(doctor=doctor, start_time=start_time, end_time=end_time_temp,
+                                                       office=office))
+            start_time = end_time_temp
+
+        serializer = self.serializer_class(objs, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
