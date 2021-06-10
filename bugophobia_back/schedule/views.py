@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTTokenUserAuthentication
 from datetime import timedelta, datetime
+from pytz import UTC
 
 from .serializers import *
 from .models import Reservation
@@ -166,3 +167,25 @@ class CreateMultipleReservationsView(generics.CreateAPIView):
 
         serializer = self.serializer_class(objs, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+class UnreserveView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated, IsOwner]
+    serializer_class = GetReservationSerializer
+
+    def get_object(self):
+        r = get_object_or_404(Reservation, id=self.kwargs.get('id'))
+        self.check_object_permissions(self.request, r)
+        if r.start_time > UTC.localize(datetime.now()):
+            r.patient = None
+            r.save()
+            return r
+        return None
+
+    def retrieve(self, request, *args, **kwargs):
+        obj = self.get_object()
+        s = self.serializer_class(obj)
+        if obj:
+            return Response(data=s.data, status=status.HTTP_200_OK)
+        else:
+            return Response(data={'detail': 'reservation time has passed'}, status=status.HTTP_400_BAD_REQUEST)

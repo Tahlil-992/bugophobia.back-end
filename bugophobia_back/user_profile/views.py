@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.shortcuts import get_object_or_404
 from django.db.utils import IntegrityError
 from rest_framework import generics, status, mixins
@@ -11,6 +13,7 @@ from .models import *
 from .serializers import *
 from .permissions import *
 from .paginations import *
+from schedule.models import Reservation
 
 
 # Create your views here.
@@ -185,54 +188,63 @@ class ChangeVisitDurationTimeView(generics.UpdateAPIView):
 
     def get_object(self):
         doctor = get_object_or_404(Doctor, user_id=self.request.user.id)
+        self.change_reservations()
         return doctor
 
+    def change_reservations(self):
+        q = Reservation.objects.filter(doctor__user_id=self.request.user.id, patient__isnull=False).latest('start_time')
+        last_day_with_patient = q.start_time.date()
+        first_day_without_patient = last_day_with_patient + timedelta(days=1)
+        q2 = Reservation.objects.filter(doctor__user_id=self.request.user.id, start_time__gt=first_day_without_patient)
+        q2.delete()
 
-#edit profile
+
+# edit profile
+
+
 class UpdateDoctorProfView(generics.RetrieveUpdateDestroyAPIView):
-    #permission_classes = [IsAuthenticated, IsOwner]
+    # permission_classes = [IsAuthenticated, IsOwner]
     queryset = BaseUser.objects.filter(is_doctor=True)
     serializer_class = UpdateDoctorProfSerializer
     lookup_field = 'username'
-    
+
 
 class UpdatePatientProfView(generics.RetrieveUpdateDestroyAPIView):
-    #permission_classes = [IsAuthenticated, IsOwner]
-    queryset = BaseUser.objects.filter(is_doctor = False)
+    # permission_classes = [IsAuthenticated, IsOwner]
+    queryset = BaseUser.objects.filter(is_doctor=False)
     serializer_class = UpdatePatientProfSerializer
     lookup_field = 'username'
 
 
-#change pass
+# change pass
 
 class ChangePasswordView(UpdateAPIView):
+    serializer_class = ChangePasswordSerializer
+    model = BaseUser
+    permission_classes = (IsAuthenticated,)
 
-        serializer_class = ChangePasswordSerializer
-        model = BaseUser
-        permission_classes = (IsAuthenticated,)
+    def get_object(self, queryset=None):
+        obj = self.request.user
+        return obj
 
-        def get_object(self, queryset=None):
-            obj = self.request.user
-            return obj
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        serializer = self.get_serializer(data=request.data)
 
-        def update(self, request, *args, **kwargs):
-            self.object = self.get_object()
-            serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            # Check old password
+            if not self.object.check_password(serializer.data.get("old_password")):
+                return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
+            # set_password also hashes the password that the user will get
+            self.object.set_password(serializer.data.get("new_password"))
+            self.object.save()
+            response = {
+                'status': 'success',
+                'code': status.HTTP_200_OK,
+                'message': 'Password updated successfully',
+                'data': []
+            }
 
-            if serializer.is_valid():
-                # Check old password
-                if not self.object.check_password(serializer.data.get("old_password")):
-                    return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
-                # set_password also hashes the password that the user will get
-                self.object.set_password(serializer.data.get("new_password"))
-                self.object.save()
-                response = {
-                    'status': 'success',
-                    'code': status.HTTP_200_OK,
-                    'message': 'Password updated successfully',
-                    'data': []
-                }
+            return Response(response)
 
-                return Response(response)
-
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
