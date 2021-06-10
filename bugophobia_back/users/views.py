@@ -131,7 +131,7 @@ class ForgotPasswordView(generics.GenericAPIView):
             else:
                 is_different = False
         user = get_object_or_404(BaseUser, email=serializer.data.get('email'))
-        message = f'Your reset password code is \n{token}'
+        message = f'Use the link below to reset your password:\nlocalhost:3000/forget-password/{token}'
         send_mail(
             'Reset password code',
             message,
