@@ -9,6 +9,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from datetime import datetime, timedelta
 from django.core.mail import send_mail
 from django.utils import timezone
+from django.utils.html import strip_tags
+from django.template.loader import render_to_string
 import string
 import random
 
@@ -132,11 +134,15 @@ class ForgotPasswordView(generics.GenericAPIView):
                 is_different = False
         user = get_object_or_404(BaseUser, email=serializer.data.get('email'))
         message = f'Use the link below to reset your password:\nlocalhost:3000/forget-password/{token}'
+        context = {'token': token}
+        html_message = render_to_string('email.html', context)
+        plain_message = strip_tags(html_message)
         send_mail(
             'Reset password code',
-            message,
+            plain_message,
             EMAIL_HOST_USER,
             [request.data.get('email')],
+            html_message=html_message,
             fail_silently=False,
         )
         ResetPasswordToken.objects.create(token=token, user=user, expiry_time=datetime.now() + timedelta(minutes=2))
