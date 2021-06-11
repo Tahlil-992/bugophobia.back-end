@@ -13,6 +13,8 @@ urlpatterns = [
     path('remove_save/<id>/', views.RemoveSavedProfileView.as_view()),
     path('is_saved/', views.IsProfileSavedView.as_view()),
     path('list_doctors/', views.ListDoctorsView.as_view()),
+    path('change_visit_duration/', views.ChangeVisitDurationTimeView.as_view()),
     path('doctor/update/<str:username>/', views.UpdateDoctorProfView.as_view()),
     path('patient/update/<str:username>/', views.UpdatePatientProfView.as_view()),
+    path('change_password/',views.ChangePasswordView.as_view()),
 ]

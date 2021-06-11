@@ -22,10 +22,10 @@ class SearchAllDoctorsView(generics.ListAPIView):
         if len(q) == 1:  # query = first name or last name or username
             return Doctor.objects.filter(
                 Q(user__username__startswith=q[0]) | Q(user__first_name__startswith=q[0]) | Q(
-                    user__last_name__startswith=q[0])).order_by('-user__date_joined')
+                    user__last_name__startswith=q[0])).order_by('-rate_avg')
         elif len(q) > 1:  # query = first name + last name
             return Doctor.objects.filter(user__first_name=q[0], user__last_name__startswith=q[1]).order_by(
-                '-user__date_joined')
+                '-rate_avg')
 
     def filter_queryset(self, queryset):
         filters = self.request.query_params
@@ -54,10 +54,10 @@ class LimitedSearchDoctorsView(generics.ListAPIView):
         if len(q) == 1:  # query = first name or last name or username
             return Doctor.objects.filter(
                 Q(user__username__startswith=q[0]) | Q(user__first_name__startswith=q[0]) | Q(
-                    user__last_name__startswith=q[0])).order_by('-user__date_joined')[:5]
+                    user__last_name__startswith=q[0])).order_by('-rate_avg')[:5]
         elif len(q) > 1:  # query = first name + last name
             return Doctor.objects.filter(user__first_name=q[0], user__last_name__startswith=q[1]).order_by(
-                '-user__date_joined')[:5]
+                '-rate_avg')[:5]
 
     def filter_queryset(self, queryset):
         filters = self.request.query_params

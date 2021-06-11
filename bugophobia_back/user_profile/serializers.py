@@ -80,7 +80,7 @@ class ListDoctorsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Doctor
-        fields = ['user', 'filed_of_specialization', 'gmc_number', 'work_experience']
+        fields = ['user', 'filed_of_specialization', 'gmc_number', 'work_experience', 'rate_avg']
 
 
 # doctor profile
@@ -90,7 +90,7 @@ class DoctorProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Doctor
-        fields = ('user', 'gmc_number', 'filed_of_specialization', 'work_experience')
+        fields = ('user', 'gmc_number', 'filed_of_specialization', 'work_experience', 'visit_duration_time')
 
 
 class PublicDoctorProfileSerializer(serializers.ModelSerializer):
@@ -102,16 +102,35 @@ class PublicDoctorProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Doctor
-        fields = ('user', 'username', 'gmc_number', 'filed_of_specialization', 'work_experience')
+        fields = ('user', 'username', 'gmc_number', 'filed_of_specialization', 'work_experience', 'visit_duration_time')
+
+
+class ChangeVisitDurationTimeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Doctor
+        fields = ('visit_duration_time',)
 
 
 class UpdateDoctorProfSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseUser
-        fields = ['city', 'phone_number', 'username', 'email']
+        fields = ['city', 'phone_number', 'username', 'email', 'pro_picture']
 
 
 class UpdatePatientProfSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseUser
-        fields = ['email', 'username', 'first_name', 'last_name', 'gender', 'age', 'phone_number', 'city']
+        fields = ['email', 'username', 'first_name', 'last_name', 'gender', 'age', 'phone_number', 'city',
+                  'pro_picture']
+
+
+# chage pass
+
+class ChangePasswordSerializer(serializers.Serializer):
+    model = BaseUser
+
+    """
+    Serializer for password change endpoint.
+    """
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
