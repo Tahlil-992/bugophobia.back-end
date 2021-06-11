@@ -72,6 +72,11 @@ class Rate(models.Model):
     doctor_id = models.ForeignKey(Doctor , on_delete = models.CASCADE)
 
 
+class ResetPasswordToken(models.Model):
+    token = models.CharField(max_length=6, unique=True)
+    user = models.ForeignKey(BaseUser, on_delete=models.CASCADE)
+    expiry_time = models.DateTimeField()
+
 
 class Office(models.Model):
     doctor=models.ForeignKey(Doctor,on_delete=models.CASCADE)
