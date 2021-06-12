@@ -10,4 +10,5 @@ urlpatterns = [
     path('patient_reservations/<from_date>/<to_date>/', views.ListPatientReservationView.as_view()),
     path('office_reservations/<office_id>/<from_date>/<to_date>/', views.ListOfficeReservationsView.as_view()),
     path('delete_reservation/<id>/', views.DeleteReservationView.as_view()),
+    path('get-notification/<int:patient>/',views.GetReservationNotification.as_view()),
 ]

@@ -5,6 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTTokenUserAuthentication
 from datetime import timedelta, datetime
+import pytz
+import pdb
 
 from .serializers import *
 from .models import Reservation
@@ -166,3 +168,29 @@ class CreateMultipleReservationsView(generics.CreateAPIView):
 
         serializer = self.serializer_class(objs, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+
+class GetReservationNotification(generics.ListAPIView):
+    serializer_class = ListPatientReservationSerializer
+
+    def get_queryset(self):
+        patient = Patient.objects.get(pk=self.kwargs['patient'])
+        data = Reservation.objects.filter(patient=patient)
+        return data
+    
+    def list(self, request, *args, **kwargs):
+        reservations = self.get_queryset()
+        notifications = dict()
+        info = list()
+        time_now = datetime.now(tz=pytz.utc)
+
+        for data in reservations:
+            info.append(
+                dict(doctor_name=data.doctor.user.username, time=data.start_time))
+
+        for data in enumerate(info):
+            time_left=data[1]['time']-time_now
+            notifications[f"notif{data[0]+1}"] = f"there is {str(time_left)} time left for appoinment with doctor {data[1]['doctor_name']}"
+        # pdb.set_trace()
+        return Response(data=notifications,status=status.HTTP_200_OK)
