@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django.db.utils import IntegrityError
 from rest_framework import generics, status, mixins
@@ -188,8 +189,11 @@ class ChangeVisitDurationTimeView(generics.UpdateAPIView):
 
     def get_object(self):
         doctor = get_object_or_404(Doctor, user_id=self.request.user.id)
-        self.change_reservations()
-        return doctor
+        try:
+            self.change_reservations()
+            return doctor
+        except ObjectDoesNotExist:
+            return doctor
 
     def change_reservations(self):
         q = Reservation.objects.filter(doctor__user_id=self.request.user.id, patient__isnull=False).latest('start_time')
