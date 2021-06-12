@@ -126,17 +126,18 @@ class OfficeSerialzier(serializers.ModelSerializer):
         for data in phones:
             p = OfficePhone(phone=data['phone'], office=office)
             p.save()
-
         return office
 
+
     def update(self, instance, validated_data):
-        phones_data = validated_data.pop('phone')
-        phone = instance.phone
-        for data in phones_data:
-            data.phone
+        phone_numbers= validated_data.pop('phone')
+        OfficePhone.objects.filter(office=instance.id).delete()
+        for data in phone_numbers:
+            OfficePhone.objects.create(office=instance,phone=data.get('phone'))
         return super().update(instance, validated_data)
 
     class Meta():
         model = Office
         fields = ['id', 'doctor', 'title', 'address', 'location', 'phone']
         lookup_field = 'doctor'
+
