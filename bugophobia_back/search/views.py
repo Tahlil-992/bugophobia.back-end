@@ -21,10 +21,10 @@ class SearchAllDoctorsView(generics.ListAPIView):
             return Doctor.objects.all()
         if len(q) == 1:  # query = first name or last name or username
             return Doctor.objects.filter(
-                Q(user__username__startswith=q[0]) | Q(user__first_name__startswith=q[0]) | Q(
-                    user__last_name__startswith=q[0])).order_by('-rate_avg')
+                Q(user__username__istartswith=q[0]) | Q(user__first_name__istartswith=q[0]) | Q(
+                    user__last_name__istartswith=q[0])).order_by('-rate_avg')
         elif len(q) > 1:  # query = first name + last name
-            return Doctor.objects.filter(user__first_name=q[0], user__last_name__startswith=q[1]).order_by(
+            return Doctor.objects.filter(user__first_name__iexact=q[0], user__last_name__istartswith=q[1]).order_by(
                 '-rate_avg')
 
     def filter_queryset(self, queryset):
@@ -33,11 +33,11 @@ class SearchAllDoctorsView(generics.ListAPIView):
         city = filters.get('city')
         specialization = filters.get('specialization')
         if gender:
-            queryset = queryset.filter(user__gender=gender)
+            queryset = queryset.filter(user__gender__iexact=gender)
         if city:
-            queryset = queryset.filter(user__city=city)
+            queryset = queryset.filter(user__city__iexact=city)
         if specialization:
-            queryset = queryset.filter(filed_of_specialization=specialization)
+            queryset = queryset.filter(filed_of_specialization__iexact=specialization)
         return queryset
 
 
@@ -53,10 +53,10 @@ class LimitedSearchDoctorsView(generics.ListAPIView):
             return Doctor.objects.all()[:5]
         if len(q) == 1:  # query = first name or last name or username
             return Doctor.objects.filter(
-                Q(user__username__startswith=q[0]) | Q(user__first_name__startswith=q[0]) | Q(
-                    user__last_name__startswith=q[0])).order_by('-rate_avg')[:5]
+                Q(user__username__istartswith=q[0]) | Q(user__first_name__istartswith=q[0]) | Q(
+                    user__last_name__istartswith=q[0])).order_by('-rate_avg')[:5]
         elif len(q) > 1:  # query = first name + last name
-            return Doctor.objects.filter(user__first_name=q[0], user__last_name__startswith=q[1]).order_by(
+            return Doctor.objects.filter(user__first_name__iexact=q[0], user__last_name__startswith_iexact=q[1]).order_by(
                 '-rate_avg')[:5]
 
     def filter_queryset(self, queryset):
@@ -65,9 +65,9 @@ class LimitedSearchDoctorsView(generics.ListAPIView):
         city = filters.get('city')
         specialization = filters.get('specialization')
         if gender:
-            queryset = queryset.filter(user__gender=gender)
+            queryset = queryset.filter(user__gender__iexact=gender)
         if city:
-            queryset = queryset.filter(user__city=city)
+            queryset = queryset.filter(user__city__iexact=city)
         if specialization:
-            queryset = queryset.filter(filed_of_specialization=specialization)
+            queryset = queryset.filter(filed_of_specialization__iexact=specialization)
         return queryset
