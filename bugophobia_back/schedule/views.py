@@ -166,3 +166,29 @@ class CreateMultipleReservationsView(generics.CreateAPIView):
 
         serializer = self.serializer_class(objs, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+
+class GetNotificationView(generics.ListAPIView):
+    serializer_class = Notification_Serializer
+
+    def get_queryset(self):
+        patient = Patient.objects.get(pk=self.kwargs['patient'])
+        data = Notification.objects.filter(patient=patient)
+        return data
+    
+    def list(self, request, *args, **kwargs):
+        notifications=self.get_queryset()   
+        for data in notifications:
+            reserve_time=data.reservation.start_time
+            present_time=datetime.now(tz=pytz.utc)
+            data.message=f"there is {reserve_time-present_time} time left to appointment with doctor {data.doctor.user.username}"
+            data.save()
+        notif_serializer=Notification_Serializer(notifications,many=True)
+        return Response(notif_serializer.data,status=status.HTTP_200_OK)
+
+
+
+class DeleteNotificationView(generics.RetrieveDestroyAPIView):
+    serializer_class=Notification_Serializer
+    queryset=Notification.objects.all()

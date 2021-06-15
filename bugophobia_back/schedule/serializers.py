@@ -61,3 +61,9 @@ class ListPatientReservationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservation
         fields = ('id', 'start_time', 'end_time', 'doctor', 'office')
+
+
+class Notification_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model=Notification
+        fields=['id','patient','reservation','doctor','message','created_at']
