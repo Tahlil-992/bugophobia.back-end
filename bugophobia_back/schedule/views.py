@@ -52,6 +52,7 @@ class GetReservationView(generics.UpdateAPIView):
             patient = get_object_or_404(Patient, user_id=request.user.id)
             reservation.patient = patient
             reservation.save()
+            Notification.objects.create(patient=patient, reservation=reservation, doctor=reservation.doctor)
             return Response(data={'detail': 'ok'}, status=status.HTTP_200_OK)
         return Response(data={'detail': 'time already taken'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -169,7 +170,6 @@ class CreateMultipleReservationsView(generics.CreateAPIView):
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
-
 class GetNotificationView(generics.ListAPIView):
     serializer_class = Notification_Serializer
 
@@ -177,22 +177,23 @@ class GetNotificationView(generics.ListAPIView):
         patient = Patient.objects.get(pk=self.kwargs['patient'])
         data = Notification.objects.filter(patient=patient)
         return data
-    
+
     def list(self, request, *args, **kwargs):
-        notifications=self.get_queryset()   
+        notifications = self.get_queryset()
         for data in notifications:
-            reserve_time=data.reservation.start_time
-            present_time=datetime.now(tz=pytz.utc)
-            data.message=f"there is {reserve_time-present_time} time left to appointment with doctor {data.doctor.user.username}"
+            reserve_time = data.reservation.start_time
+            present_time = datetime.now(tz=pytz.utc)
+            data.message = f"there is {reserve_time - present_time} time left to appointment with doctor {data.doctor.user.username}"
             data.save()
-        notif_serializer=Notification_Serializer(notifications,many=True)
-        return Response(notif_serializer.data,status=status.HTTP_200_OK)
+        notif_serializer = Notification_Serializer(notifications, many=True)
+        return Response(notif_serializer.data, status=status.HTTP_200_OK)
 
 
+class DeleteNotificationView(generics.DestroyAPIView):
+    serializer_class = Notification_Serializer
+    queryset = Notification.objects.all()
 
-class DeleteNotificationView(generics.RetrieveDestroyAPIView):
-    serializer_class=Notification_Serializer
-    queryset=Notification.objects.all()
+
 class UnreserveView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated, IsOwner]
     serializer_class = GetReservationSerializer
