@@ -102,6 +102,19 @@ class ScoreAverageSerializer(serializers.Serializer):
         return super().update(instance, validated_data)
 
 
+class ForgotPasswordUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BaseUser
+        fields = ['email']
+
+
+class ConfirmResetPasswordUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BaseUser
+        fields = ['password']
+        extra_kwargs = {'password': {'write_only': True}}
+
+        
 class TopDoctorSerializer(serializers.ModelSerializer):
     avg = serializers.FloatField(default=0.0)
     number = serializers.IntegerField(default=0)
