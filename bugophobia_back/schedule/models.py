@@ -19,8 +19,8 @@ class Reservation(models.Model):
 
 
 class Notification(models.Model):
-    patient=models.ForeignKey(Patient,on_delete=models.CASCADE)
-    reservation=models.ForeignKey(Reservation,on_delete=models.CASCADE)
-    doctor=models.ForeignKey(Doctor,on_delete=models.CASCADE)
-    message=models.TextField()
-    created_at=models.DateTimeField(default=datetime.now(tz=pytz.utc))
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(default=datetime.now(tz=pytz.utc))
