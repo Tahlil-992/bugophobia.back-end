@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTTokenUserAuthentication
 from datetime import timedelta, datetime
+from django.utils import timezone
 from pytz import UTC
 
 from .serializers import *
@@ -182,7 +183,7 @@ class GetNotificationView(generics.ListAPIView):
         notifications=self.get_queryset()   
         for data in notifications:
             reserve_time=data.reservation.start_time
-            present_time=datetime.now(tz=pytz.utc)
+            present_time=timezone.now()
             data.message=f"there is {reserve_time-present_time} time left to appointment with doctor {data.doctor.user.username}"
             data.save()
         notif_serializer=Notification_Serializer(notifications,many=True)
@@ -193,6 +194,8 @@ class GetNotificationView(generics.ListAPIView):
 class DeleteNotificationView(generics.RetrieveDestroyAPIView):
     serializer_class=Notification_Serializer
     queryset=Notification.objects.all()
+
+
 class UnreserveView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated, IsOwner]
     serializer_class = GetReservationSerializer

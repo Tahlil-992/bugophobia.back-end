@@ -34,8 +34,7 @@ class Patient(models.Model):
     insurance_type = models.CharField(max_length=255, choices=INSURANCE_TYPES, default='O', null=True, blank=True)
 
     def __str__(self):
-        #return self.user.email
-        return f'{self.user.email} {self.pk}'
+        return self.user.email
 
 
 class Doctor(models.Model):

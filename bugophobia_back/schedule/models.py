@@ -1,7 +1,6 @@
 from django.db import models
 from users.models import Doctor, Patient, Office
-import pytz
-from datetime import datetime
+from django.utils import timezone
 
 
 # Create your models here.
@@ -23,4 +22,4 @@ class Notification(models.Model):
     reservation=models.ForeignKey(Reservation,on_delete=models.CASCADE)
     doctor=models.ForeignKey(Doctor,on_delete=models.CASCADE)
     message=models.TextField()
-    created_at=models.DateTimeField(default=datetime.now(tz=pytz.utc))
+    created_at=models.DateTimeField(default=timezone.now)
