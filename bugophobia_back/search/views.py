@@ -56,7 +56,7 @@ class LimitedSearchDoctorsView(generics.ListAPIView):
                 Q(user__username__istartswith=q[0]) | Q(user__first_name__istartswith=q[0]) | Q(
                     user__last_name__istartswith=q[0])).order_by('-rate_avg')[:5]
         elif len(q) > 1:  # query = first name + last name
-            return Doctor.objects.filter(user__first_name__iexact=q[0], user__last_name__startswith_iexact=q[1]).order_by(
+            return Doctor.objects.filter(user__first_name__iexact=q[0], user__last_name__istartswith=q[1]).order_by(
                 '-rate_avg')[:5]
 
     def filter_queryset(self, queryset):
