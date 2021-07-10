@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTTokenUserAuthentication
@@ -174,7 +174,7 @@ class ConfirmResetPasswordView(generics.GenericAPIView):
             reset_password_token.delete()
             return Response(data={'detail': 'token expired'}, status=status.HTTP_400_BAD_REQUEST)
 
-          
+
 class TopDoctorView(generics.ListAPIView):
     queryset = Doctor.objects.all()
     serializer_class = TopDoctorSerializer
@@ -199,27 +199,9 @@ class OfficeList(generics.ListCreateAPIView):
     queryset = Office.objects.all()
 
 
-# {
-#     "doctor": 1,
-#     "title": "new item",
-#     "address": "تهران",
-#     "location": 454454.0,
-#     "phone": [
-#         {
-#             "phone": "+914221036"
-#         },
-#         {
-#             "phone": "+9144562528"
-#         },
-#         {
-#             "phone": "+9144562528"
-#         }
-#     ]
-# }
-
 class OfficeDetail(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class=OfficeSerialzier
-    queryset=Office.objects.all()
+    serializer_class = OfficeSerialzier
+    queryset = Office.objects.all()
 
 
 class officeListByDoctorID(generics.ListAPIView):
@@ -227,3 +209,40 @@ class officeListByDoctorID(generics.ListAPIView):
 
     def get_queryset(self):
         return Office.objects.filter(doctor=self.kwargs['doctor'])
+
+
+class ConfirmDoctorView(generics.GenericAPIView):
+    permission_classes = [IsAdminUser]
+    serializer_class = ForgotPasswordUserSerializer
+
+    def post(self, request):
+        email = request.data.get('email')
+        doctor = get_object_or_404(Doctor, user__email=email)
+        doctor.is_confirmed = True
+        doctor.save()
+        send_mail(
+            'Your account has activated',
+            "Congratulations, your account has activated and you can use our website.",
+            EMAIL_HOST_USER,
+            [email],
+            fail_silently=False,
+        )
+        return Response(status=status.HTTP_200_OK)
+
+
+class NotConfirmDoctorView(generics.GenericAPIView):
+    permission_classes = [IsAdminUser]
+    serializer_class = ForgotPasswordUserSerializer
+
+    def post(self, request):
+        email = request.data.get('email')
+        doctor = get_object_or_404(BaseUser, email=email)
+        doctor.delete()
+        send_mail(
+            'Your sign up application got rejected',
+            "Your credentials weren't correct but feel free to register again with correct information.",
+            EMAIL_HOST_USER,
+            [email],
+            fail_silently=False,
+        )
+        return Response(status=status.HTTP_200_OK)
