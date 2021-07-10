@@ -227,3 +227,8 @@ class officeListByDoctorID(generics.ListAPIView):
 
     def get_queryset(self):
         return Office.objects.filter(doctor=self.kwargs['doctor'])
+
+
+class DeleteAccountView(generics.DestroyAPIView):
+    serializer_class=RegisterBaseUserSerializer
+    queryset=BaseUser.objects.all()

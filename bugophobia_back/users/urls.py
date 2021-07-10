@@ -19,4 +19,5 @@ urlpatterns = [
     path('office-list/' , views.OfficeList.as_view(), name= 'office-list'),
     path('office-list/<int:doctor>/' , views.officeListByDoctorID.as_view(), name= 'office-list'),
     path('office-detail/<int:pk>/' , views.OfficeDetail.as_view(), name= 'office-detail'),
+    path('delete-account/<int:pk>/' , views.DeleteAccountView.as_view(), name= 'delete-account'),
 ]
